@@ -1,0 +1,13 @@
+--- libguestfs-1.12.7/fish/progress.c.wiget	2011-10-09 14:09:04.429015818 +0200
++++ libguestfs-1.12.7/fish/progress.c	2011-10-09 14:09:31.781454156 +0200
+@@ -31,8 +31,8 @@
+ /* Include these last since they redefine symbols such as 'lines'
+  * which seriously breaks other headers.
+  */
+-#include <term.h>
+-#include <curses.h>
++#include <ncurses/term.h>
++#include <ncurses/curses.h>
+ 
+ /* Provided by termcap or terminfo emulation, but not defined
+  * in any header file.
