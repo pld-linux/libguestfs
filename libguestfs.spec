@@ -10,7 +10,7 @@ Summary:	Tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.12.7
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.12-stable/%{name}-%{version}.tar.gz
@@ -165,7 +165,7 @@ bash-completion for guestfish tool.
 #%{__automake}
 %configure \
 	vmchannel_test=no \
-	QEMU=/usr/bin/qemu \
+	QEMU=%{_bindir}/qemu \
 	--with-java-home=%{java_home} \
 	--with-qemu=qemu \
 	--disable-haskell \
@@ -220,7 +220,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-win-reg
 %attr(755,root,root) %{_libdir}/libguestfs.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libguestfs.so.0
-/etc/libguestfs-tools.conf
+%{_sysconfdir}/libguestfs-tools.conf
 %{_mandir}/man1/guestfish.1*
 %{_mandir}/man1/guestfs-recipes.1*
 %{_mandir}/man1/guestmount.1*
@@ -283,7 +283,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-#%doc devel-doc/*
 %{_libdir}/libguestfs.so
 %{_includedir}/guestfs.h
 %{_pkgconfigdir}/libguestfs.pc
@@ -302,11 +301,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -n perl-libguestfs
 %defattr(644,root,root,755)
 %{perl_vendorarch}/Sys/Guestfs.pm
+%dir %{perl_vendorarch}/Sys/Guestfs
 %{perl_vendorarch}/Sys/Guestfs/Lib.pm
 %{perl_vendorarch}/Sys/bindtests.pl
-%{perl_vendorarch}/auto/Sys/Guestfs/.packlist
+%dir %{perl_vendorarch}/auto/Sys/Guestfs
 %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.bs
-%{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.so
+%attr(755,root,root) %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.so
 %{_mandir}/man3/guestfs-perl.3*
 %{_mandir}/man3/Sys::Guestfs.3pm*
 %{_mandir}/man3/Sys::Guestfs::Lib.3pm*
@@ -314,9 +314,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -n java-libguestfs
 %defattr(644,root,root,755)
 %{_libdir}/libguestfs_jni.so
-%{_libdir}/libguestfs_jni.so.1
-%{_libdir}/libguestfs_jni.so.1.12.7
-%{_datadir}/java/libguestfs-1.12.7.jar
+%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1
+%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1.12.7
+%{_javadir}/libguestfs-1.12.7.jar
 %{_mandir}/man3/guestfs-java.3*
 
 %files -n java-libguestfs-javadoc
@@ -325,12 +325,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n ocaml-libguestfs
 %defattr(644,root,root,755)
-%{_libdir}/ocaml/stublibs/dllmlguestfs.so
+%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllmlguestfs.so
 %{_libdir}/ocaml/stublibs/dllmlguestfs.so.owner
 %{_mandir}/man3/guestfs-ocaml.3*
 
 %files -n ocaml-libguestfs-devel
 %defattr(644,root,root,755)
+%dir %{_libdir}/ocaml/guestfs
 %{_libdir}/ocaml/guestfs/META
 %{_libdir}/ocaml/guestfs/bindtests.cmi
 %{_libdir}/ocaml/guestfs/bindtests.cmx
@@ -346,7 +347,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_mandir}/man3/guestfs-python.3*
 %{py_sitedir}/guestfs.py
-%{py_sitedir}/libguestfsmod.so
+%attr(755,root,root) %{py_sitedir}/libguestfsmod.so
 
 %files -n bash-completion-libguestfs
 %defattr(644,root,root,755)
