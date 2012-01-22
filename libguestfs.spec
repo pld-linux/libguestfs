@@ -1,5 +1,5 @@
 #
-# TODO: php, ruby and haskell bindings
+# TODO: ruby and haskell bindings
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
@@ -9,12 +9,12 @@
 Summary:	Tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.12.7
-Release:	2
+Version:	1.12.11
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.12-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	b8099728e7516bbb9c7e3df96f3c7f30
+# Source0-md5:	e8aeab7dcedda08d73828e7387cd6cc0
 Patch0:		ncurses.patch
 URL:		http://libguestfs.org/
 BuildRequires:	attr-devel
@@ -29,6 +29,7 @@ BuildRequires:	gperf
 BuildRequires:	hivex-devel
 BuildRequires:	jdk
 BuildRequires:	libconfig-devel
+BuildRequires:	libfuse-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libtool
@@ -52,7 +53,8 @@ BuildRequires:	perl(Test::More)
 BuildRequires:	perl(Win::Hivex)
 BuildRequires:	perl(Win::Hivex::Regedit)
 BuildRequires:	perl-tools-pod
-#BuildRequires:	php-devel
+BuildRequires:	php-devel
+BuildRequires:	re2c
 BuildRequires:	po4a
 BuildRequires:	python
 BuildRequires:	python-devel
@@ -145,6 +147,14 @@ Requires:	%{name} = %{version}-%{release}
 %description -n python-libguestfs
 Python bindings for libguestfs.
 
+%package -n php-guestfs
+Summary:	PHP bindings for libguestfs
+Group:		Development/Languages/PHP
+Requires:	%{name} = %{version}-%{release}
+
+%description -n php-guestfs
+PHP bindings for libguestfs.
+
 %package -n bash-completion-libguestfs
 Summary:	bash-completion for libguestfs tools
 Group:		Applications/Shells
@@ -182,7 +192,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
 	INSTALLDIRS=vendor \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT \
+	phpdir=%{_sysconfdir}/php/conf.d
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la \
 	$RPM_BUILD_ROOT%{py_sitedir}/*.la
@@ -315,13 +326,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libguestfs_jni.so
 %attr(755,root,root) %{_libdir}/libguestfs_jni.so.1
-%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1.12.7
-%{_javadir}/libguestfs-1.12.7.jar
+%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1.12.11
+%{_javadir}/libguestfs-1.12.11.jar
 %{_mandir}/man3/guestfs-java.3*
 
 %files -n java-libguestfs-javadoc
 %defattr(644,root,root,755)
-%{_javadocdir}/libguestfs-java-1.12.7
+%{_javadocdir}/libguestfs-java-1.12.11
 
 %files -n ocaml-libguestfs
 %defattr(644,root,root,755)
@@ -348,6 +359,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/guestfs-python.3*
 %{py_sitedir}/guestfs.py
 %attr(755,root,root) %{py_sitedir}/libguestfsmod.so
+
+%files -n php-guestfs
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/php/conf.d/guestfs_php.ini
+%attr(755,root,root) %{_libdir}/php/guestfs_php.so
 
 %files -n bash-completion-libguestfs
 %defattr(644,root,root,755)
