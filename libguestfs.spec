@@ -175,6 +175,13 @@ bash-completion for guestfish tool.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
+cd daemon
+%{__libtoolize}
+%{__aclocal} -I m4
+%{__autoconf}
+%{__autoheader}
+%{__automake}
+cd ..
 %configure \
 	vmchannel_test=no \
 	QEMU=%{_bindir}/qemu \
