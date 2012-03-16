@@ -16,3 +16,21 @@
 -guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS)
 +AM_CPPFLAGS = -I$(srcdir)/lib -Ilib $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS) $(LIBXML2_CFLAGS)
 +guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS) $(LIBXML2_CFLAGS)
+--- libguestfs-1.12.11/daemon/configure.ac~	2011-12-22 20:06:47.000000000 +0100
++++ libguestfs-1.12.11/daemon/configure.ac	2012-03-16 20:17:43.343161378 +0100
+@@ -168,6 +168,15 @@
+         ],
+         [AC_MSG_WARN([augeas not found, some core features will be disabled])])
+ 
++dnl libxml2 (highly recommended)
++PKG_CHECK_MODULES([LIBXML2], [libxml-2.0],
++        [AC_SUBST([LIBXML2_CFLAGS])
++         AC_SUBST([LIBXML2_LIBS])
++         AC_DEFINE([HAVE_LIBXML2],[1],[libxml2 found at compile time.])
++        ],
++        [AC_MSG_WARN([libxml2 not found, some core features will be disabled])])
++AM_CONDITIONAL([HAVE_LIBXML2],[test "x$LIBXML2_LIBS" != "x"])
++
+ dnl Check for libselinux (optional).
+ AC_CHECK_HEADERS([selinux/selinux.h])
+ AC_CHECK_LIB([selinux],[setexeccon],[
