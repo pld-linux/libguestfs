@@ -1,0 +1,16 @@
+--- libguestfs-1.12.11/daemon/Makefile.am~	2011-12-22 20:05:03.000000000 +0100
++++ libguestfs-1.12.11/daemon/Makefile.am	2012-03-16 18:49:15.259588154 +0100
+@@ -173,6 +173,7 @@
+ 	liberrnostring.a \
+ 	libprotocol.a \
+ 	$(AUGEAS_LIBS) \
++	$(LIBXML2_LIBS) \
+ 	lib/libgnu.a \
+ 	$(GETADDRINFO_LIB) \
+ 	$(HOSTENT_LIB) \
+@@ -183,4 +184,4 @@
+ 	$(SERVENT_LIB)
+ 
+ AM_CPPFLAGS = -I$(srcdir)/lib -Ilib
+-guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS)
++guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS) $(LIBXML2_CFLAGS)

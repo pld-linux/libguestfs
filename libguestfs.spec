@@ -10,12 +10,13 @@ Summary:	Tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.12.11
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.12-stable/%{name}-%{version}.tar.gz
 # Source0-md5:	e8aeab7dcedda08d73828e7387cd6cc0
 Patch0:		ncurses.patch
+Patch1:		augeas-libxml2.patch
 URL:		http://libguestfs.org/
 BuildRequires:	attr-devel
 BuildRequires:	augeas-devel
@@ -166,18 +167,17 @@ bash-completion for guestfish tool.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
-#%{__libtoolize}
-#%{__aclocal}
-#%{__autoconf}
-#%{__autoheader}
-#%{__automake}
+%{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 %configure \
 	vmchannel_test=no \
-	QEMU=%{_bindir}/qemu \
 	--with-java-home=%{java_home} \
-	--with-qemu=qemu \
 	--disable-haskell \
 	--disable-ruby \
 	--disable-appliance \
