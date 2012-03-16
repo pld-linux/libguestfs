@@ -10,7 +10,7 @@ Summary:	Tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.12.11
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.12-stable/%{name}-%{version}.tar.gz
@@ -61,7 +61,7 @@ BuildRequires:	python-devel
 BuildRequires:	readline-devel
 #BuildRequires:	ruby
 #BuildRequires:	ruby-devel
-Requires:	qemu
+Requires:	qemu-common
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
