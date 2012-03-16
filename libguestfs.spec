@@ -177,7 +177,9 @@ bash-completion for guestfish tool.
 %{__automake}
 %configure \
 	vmchannel_test=no \
+	QEMU=%{_bindir}/qemu \
 	--with-java-home=%{java_home} \
+	--with-qemu=qemu \
 	--disable-haskell \
 	--disable-ruby \
 	--disable-appliance \
