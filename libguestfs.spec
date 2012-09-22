@@ -1,5 +1,6 @@
-#
-# TODO: ruby and haskell bindings
+# TODO:
+# - ruby, haskell, erlang bindings
+# - systemtap probes
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
@@ -17,14 +18,15 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.12.11
-Release:	5
+Version:	1.18.8
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.12-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	e8aeab7dcedda08d73828e7387cd6cc0
+Source0:	http://libguestfs.org/download/1.18-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	043d4e5c89a8cb21834896acaa8c541c
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
+Patch2:		%{name}-link.patch
 URL:		http://libguestfs.org/
 BuildRequires:	attr-devel
 BuildRequires:	augeas-devel
@@ -33,10 +35,13 @@ BuildRequires:	automake
 BuildRequires:	cdrkit-mkisofs
 BuildRequires:	cpio
 BuildRequires:	db-utils
-#BuildRequires:	febootstrap
+#BuildRequires:	febootstrap >= 3.0
 BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
+BuildRequires:	glib2-devel >= 1:2.26.0
+BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
+BuildRequires:	gtk-doc >= 1.14
 BuildRequires:	hivex-devel
 %{?with_java:BuildRequires:	jdk}
 BuildRequires:	libconfig-devel
@@ -51,7 +56,7 @@ BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
 BuildRequires:	ocaml-findlib
-#-devel
+# ocaml-gettext
 BuildRequires:	ocaml-pcre-devel
 %endif
 BuildRequires:	pcre-devel
@@ -70,6 +75,8 @@ BuildRequires:	perl-modules
 BuildRequires:	perl(Data::Dumper)
 BuildRequires:	perl(Getopt::Long)
 BuildRequires:	perl(Locale::TextDomain)
+BuildRequires:	perl(Pod::Man)
+BuildRequires:	perl(Pod::Simple)
 BuildRequires:	perl(Pod::Usage)
 %endif
 %{?with_php:BuildRequires:	php-devel}
@@ -87,6 +94,9 @@ BuildRequires:	ruby-devel
 BuildRequires:	ruby-rake
 %endif
 Requires:	qemu-common
+Suggests:	db-utils
+Suggests:	icoutils
+Suggests:	netpbm-progs
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -127,6 +137,56 @@ Static libguestfs library.
 
 %description static -l pl.UTF-8
 Statyczna biblioteka libguestfs.
+
+%package apidocs
+Summary:	libguestfs API documentation
+Summary(pl.UTF-8):	Dokumentacja API libguestfs
+Group:		Documentation
+
+%description apidocs
+libguestfs API documentation.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API libguestfs.
+
+%package gobject
+Summary:	GObject bindings to libguestfs library
+Summary(pl.UTF-8):	Wiązania GObject do biblioteki libguestfs
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	glib2 >= 1:2.26.0
+
+%description gobject
+GObject bindings to libguestfs library.
+
+%description gobject -l pl.UTF-8
+Wiązania GObject do biblioteki libguestfs.
+
+%package gobject-devel
+Summary:	Header files for libguestfs-gobject library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki libguestfs-gobject
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-gobject = %{version}-%{release}
+Requires:	glib2-devel >= 1:2.26.0
+
+%description gobject-devel
+Header files for libguestfs-gobject library.
+
+%description gobject-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki libguestfs-gobject.
+
+%package gobject-static
+Summary:	Static libguestfs-gobject library
+Summary(pl.UTF-8):	Statyczna biblioteka libguestfs-gobject
+Group:		Development/Libraries
+Requires:	%{name}-gobject-devel = %{version}-%{release}
+
+%description gobject-static
+Static libguestfs-gobject library.
+
+%description gobject-static -l pl.UTF-8
+Statyczna biblioteka libguestfs-gobject.
 
 %package tools
 Summary:	libguestfs tools for accessing and modifying virtual machine disk images
@@ -252,6 +312,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}
@@ -259,16 +320,15 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-cd daemon
-%{__libtoolize}
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-cd ..
 %configure \
 	vmchannel_test=no \
+	PBMTEXT=/usr/bin/pbmtext \
+	PNMTOPNG=/usr/bin/pnmtopng \
+	BMPTOPNM=/usr/bin/bmptopnm \
+	PAMCUT=/usr/bin/pamcut \
+	WRESTOOL=/usr/bin/wrestool \
 	QEMU=%{_bindir}/qemu \
+	--with-html-dir=%{_gtkdocdir} \
 	--with-java-home=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-qemu=qemu \
 	--enable-install-daemon \
@@ -308,6 +368,12 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
+%post	gobject -p /sbin/ldconfig
+%postun	gobject -p /sbin/ldconfig
+
+%post	-n java-libguestfs -p /sbin/ldconfig
+%postun	-n java-libguestfs -p /sbin/ldconfig
+
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc AUTHORS BUGS ChangeLog README RELEASE-NOTES ROADMAP TODO
@@ -319,11 +385,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libguestfs.so
 %{_includedir}/guestfs.h
 %{_pkgconfigdir}/libguestfs.pc
-%{_mandir}/man3/guestfs-examples.3*
 %{_mandir}/man3/guestfs.3*
+%{_mandir}/man3/guestfs-examples.3*
 %{_mandir}/man3/libguestfs.3*
-%{_mandir}/ja/man3/guestfs.3*
-%{_mandir}/uk/man3/guestfs.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-examples.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-examples.3*
 
 %if %{with static_libs}
 %files static
@@ -331,17 +399,42 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libguestfs.a
 %endif
 
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/guestfs
+
+%files gobject
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libguestfs-gobject-1.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libguestfs-gobject-1.0.so.0
+%{_libdir}/girepository-1.0/Guestfs-1.0.typelib
+
+%files gobject-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libguestfs-gobject-1.0.so
+%{_includedir}/guestfs-gobject.h
+%{_includedir}/guestfs-gobject
+%{_datadir}/gir-1.0/Guestfs-1.0.gir
+
+%if %{with static_libs}
+%files gobject-static
+%defattr(644,root,root,755)
+%{_libdir}/libguestfs-gobject-1.0.a
+%endif
+
 %files tools
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/guestfish
 %attr(755,root,root) %{_bindir}/guestmount
 %attr(755,root,root) %{_bindir}/libguestfs-test-tool
+%attr(755,root,root) %{_bindir}/virt-alignment-scan
 %attr(755,root,root) %{_bindir}/virt-cat
 %attr(755,root,root) %{_bindir}/virt-copy-in
 %attr(755,root,root) %{_bindir}/virt-copy-out
 %attr(755,root,root) %{_bindir}/virt-df
 %attr(755,root,root) %{_bindir}/virt-edit
 %attr(755,root,root) %{_bindir}/virt-filesystems
+%attr(755,root,root) %{_bindir}/virt-format
 %attr(755,root,root) %{_bindir}/virt-inspector
 %attr(755,root,root) %{_bindir}/virt-ls
 %attr(755,root,root) %{_bindir}/virt-rescue
@@ -350,41 +443,62 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/guestfsd
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
 %{_mandir}/man1/guestfish.1*
+%{_mandir}/man1/guestfs-faq.1*
+%{_mandir}/man1/guestfs-performance.1*
 %{_mandir}/man1/guestfs-recipes.1*
+%{_mandir}/man1/guestfs-testing.1*
 %{_mandir}/man1/guestmount.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
+%{_mandir}/man1/virt-alignment-scan.1*
 %{_mandir}/man1/virt-cat.1*
 %{_mandir}/man1/virt-copy-in.1*
 %{_mandir}/man1/virt-copy-out.1*
 %{_mandir}/man1/virt-df.1*
 %{_mandir}/man1/virt-edit.1*
 %{_mandir}/man1/virt-filesystems.1*
+%{_mandir}/man1/virt-format.1*
 %{_mandir}/man1/virt-inspector.1*
 %{_mandir}/man1/virt-ls.1*
 %{_mandir}/man1/virt-rescue.1*
 %{_mandir}/man1/virt-tar-in.1*
 %{_mandir}/man1/virt-tar-out.1*
 %lang(ja) %{_mandir}/ja/man1/guestfish.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-faq.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-performance.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-recipes.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-testing.1*
 %lang(ja) %{_mandir}/ja/man1/guestmount.1*
+#%lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
+%lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
+%lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
 %lang(ja) %{_mandir}/ja/man1/virt-cat.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-out.1*
 %lang(ja) %{_mandir}/ja/man1/virt-df.1*
 %lang(ja) %{_mandir}/ja/man1/virt-edit.1*
 %lang(ja) %{_mandir}/ja/man1/virt-filesystems.1*
+%lang(ja) %{_mandir}/ja/man1/virt-format.1*
 %lang(ja) %{_mandir}/ja/man1/virt-inspector.1*
 %lang(ja) %{_mandir}/ja/man1/virt-ls.1*
 %lang(ja) %{_mandir}/ja/man1/virt-rescue.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-out.1*
 %lang(uk) %{_mandir}/uk/man1/guestfish.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-faq.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-performance.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-recipes.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-testing.1*
 %lang(uk) %{_mandir}/uk/man1/guestmount.1*
+#%lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
+%lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
+%lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
 %lang(uk) %{_mandir}/uk/man1/virt-cat.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-out.1*
 %lang(uk) %{_mandir}/uk/man1/virt-df.1*
 %lang(uk) %{_mandir}/uk/man1/virt-edit.1*
 %lang(uk) %{_mandir}/uk/man1/virt-filesystems.1*
+%lang(uk) %{_mandir}/uk/man1/virt-format.1*
 %lang(uk) %{_mandir}/uk/man1/virt-inspector.1*
 %lang(uk) %{_mandir}/uk/man1/virt-ls.1*
 %lang(uk) %{_mandir}/uk/man1/virt-rescue.1*
@@ -392,9 +506,17 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-tar-out.1*
 %if %{with ocaml}
 %attr(755,root,root) %{_bindir}/virt-resize
+%attr(755,root,root) %{_bindir}/virt-sparsify
+%attr(755,root,root) %{_bindir}/virt-sysprep
 %{_mandir}/man1/virt-resize.1*
+%{_mandir}/man1/virt-sparsify.1*
+%{_mandir}/man1/virt-sysprep.1*
 %lang(ja) %{_mandir}/ja/man1/virt-resize.1*
+%lang(ja) %{_mandir}/ja/man1/virt-sparsify.1*
+%lang(ja) %{_mandir}/ja/man1/virt-sysprep.1*
 %lang(uk) %{_mandir}/uk/man1/virt-resize.1*
+%lang(uk) %{_mandir}/uk/man1/virt-sparsify.1*
+%lang(uk) %{_mandir}/uk/man1/virt-sysprep.1*
 %endif
 %if %{with perltools}
 %attr(755,root,root) %{_bindir}/virt-list-filesystems
@@ -422,15 +544,17 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with java}
 %files -n java-libguestfs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1.12.11
-%attr(755,root,root) %{_libdir}/libguestfs_jni.so.1
+%attr(755,root,root) %{_libdir}/libguestfs_jni.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libguestfs_jni.so.1
 %attr(755,root,root) %{_libdir}/libguestfs_jni.so
-%{_javadir}/libguestfs-1.12.11.jar
+%{_javadir}/libguestfs-%{version}.jar
 %{_mandir}/man3/guestfs-java.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-java.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-java.3*
 
 %files -n java-libguestfs-javadoc
 %defattr(644,root,root,755)
-%{_javadocdir}/libguestfs-java-1.12.11
+%{_javadocdir}/libguestfs-java-%{version}
 %endif
 
 %if %{with ocaml}
@@ -443,8 +567,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %dir %{_libdir}/ocaml/guestfs
 %{_libdir}/ocaml/guestfs/META
-%{_libdir}/ocaml/guestfs/bindtests.cmi
-%{_libdir}/ocaml/guestfs/bindtests.cmx
 %{_libdir}/ocaml/guestfs/guestfs.cmi
 %{_libdir}/ocaml/guestfs/guestfs.cmx
 %{_libdir}/ocaml/guestfs/guestfs.mli
@@ -453,6 +575,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/guestfs/mlguestfs.cma
 %{_libdir}/ocaml/guestfs/mlguestfs.cmxa
 %{_mandir}/man3/guestfs-ocaml.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-ocaml.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-ocaml.3*
 %endif
 
 %if %{with perl}
@@ -468,6 +592,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/guestfs-perl.3*
 %{_mandir}/man3/Sys::Guestfs.3pm*
 %{_mandir}/man3/Sys::Guestfs::Lib.3pm*
+%lang(ja) %{_mandir}/ja/man3/guestfs-perl.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-perl.3*
 %endif
 
 %files -n php-guestfs
@@ -481,6 +607,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/libguestfsmod.so
 %{py_sitedir}/guestfs.py[co]
 %{_mandir}/man3/guestfs-python.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-python.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-python.3*
 %endif
 
 %files -n bash-completion-libguestfs
