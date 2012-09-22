@@ -72,6 +72,14 @@ files inside guests, scripting changes to VMs, monitoring disk
 used/free statistics, P2V, V2V, performing partial backups, cloning
 VMs, and much else besides.
 
+%description -l pl.UTF-8
+libguestfs to zestaw narzędzi do dostępu oraz modyfikowania obrazów
+dysków maszyn wirtualnych (VM). Można je wykorzystywać do oglądania
+i edycji plików wewnątrz gości, zmian skryptowych w VM-ach,
+monitorowania statystyk używanego/dostępnego miejsca na dyskach, P2V,
+V2V, wykonywania częściowych kopii zapasowych, klonowania VM-ów i
+wielu podobnych operacji.
+
 %package devel
 Summary:	Header files for libguestfs library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki libguestfs
@@ -96,73 +104,100 @@ Static libguestfs library.
 %description static -l pl.UTF-8
 Statyczna biblioteka libguestfs.
 
-%package -n perl-libguestfs
-Summary:	Perl bindings for libguestfs
-Group:		Development/Languages/Perl
-Requires:	%{name} = %{version}-%{release}
-
-
-%description -n perl-libguestfs
-Perl bindings for libguestfs.
-
 %package -n java-libguestfs
 Summary:	Java bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania Javy do libguestfs
 Group:		Libraries/Java
 Requires:	%{name} = %{version}-%{release}
 
 %description -n java-libguestfs
 Java bindings for libguestfs.
 
+%description -n java-libguestfs -l pl.UTF-8
+Wiązania Javy do libguestfs.
+
 %package -n java-libguestfs-javadoc
 Summary:	Java bindings for libguestfs - documentation
+Summary(pl.UTF-8):	Wiązania Javy do libguestfs - dokumentacja
 Group:		Documentation
 
 %description -n java-libguestfs-javadoc
 Java bindings for libguestfs - documentation.
 
+%description -n java-libguestfs-javadoc -l pl.UTF-8
+Wiązania Javy do libguestfs - dokumentacja.
+
 %package -n ocaml-libguestfs
 Summary:	OCaml bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania OCamla do libguestfs
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description -n ocaml-libguestfs
 OCaml bindings for libguestfs.
 
+%description -n ocaml-libguestfs -l pl.UTF-8
+Wiązania OCamla do libguestfs.
+
 %package -n ocaml-libguestfs-devel
-Summary:	Header files for ocaml-libguestfs library
-Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki ocaml-libguestfs
+Summary:	Development files OCaml libguestfs bindings
+Summary(pl.UTF-8):	Pliki programistyczne wiązań OCamla do libguestfs
 Group:		Development/Libraries
 Requires:	ocaml-%{name} = %{version}-%{release}
 
 %description -n ocaml-libguestfs-devel
-Header files for ocaml-libguestfs library.
+Development files OCaml libguestfs bindings.
 
 %description -n ocaml-libguestfs-devel -l pl.UTF-8
-Pliki nagłówkowe biblioteki ocaml-libguestfs.
+Pliki programistyczne wiązań OCamla do libguestfs.
 
-%package -n python-libguestfs
-Summary:	Python bindings for libguestfs
-Group:		Development/Languages/Python
+%package -n perl-libguestfs
+Summary:	Perl bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania Perla do libguestfs
+Group:		Development/Languages/Perl
 Requires:	%{name} = %{version}-%{release}
 
-%description -n python-libguestfs
-Python bindings for libguestfs.
+%description -n perl-libguestfs
+Perl bindings for libguestfs.
+
+%description -n perl-libguestfs -l pl.UTF-8
+Wiązania Perla do libguestfs.
 
 %package -n php-guestfs
 Summary:	PHP bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania PHP do libguestfs
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{version}-%{release}
 
 %description -n php-guestfs
 PHP bindings for libguestfs.
 
+%description -n php-guestfs -l pl.UTF-8
+Wiązania PHP do libguestfs.
+
+%package -n python-libguestfs
+Summary:	Python bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania Pythona do libguestfs
+Group:		Development/Languages/Python
+Requires:	%{name} = %{version}-%{release}
+
+%description -n python-libguestfs
+Python bindings for libguestfs.
+
+%description -n python-libguestfs -l pl.UTF-8
+Wiązania Pythona do libguestfs.
+
 %package -n bash-completion-libguestfs
 Summary:	bash-completion for libguestfs tools
+Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
 Group:		Applications/Shells
 Requires:	bash-completion
 
 %description -n bash-completion-libguestfs
 bash-completion for guestfish tool.
+
+%description -n bash-completion-libguestfs -l pl.UTF-8
+Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 
 %prep
 %setup -q
