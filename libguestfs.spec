@@ -1,9 +1,10 @@
 # TODO:
-# - ruby, haskell, erlang bindings
+# - haskell, erlang bindings
 # - systemtap probes
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
+%bcond_with	erlang		# Erlang binding
 %bcond_with	haskell		# Haskell (GHC) binding
 %bcond_without	java		# Java binding
 %bcond_without	ocaml		# OCaml binding and tools
@@ -11,7 +12,7 @@
 %bcond_without	perltools	# Perl tools
 %bcond_without	php		# PHP binding
 %bcond_without	python		# Python binding
-%bcond_with	ruby		# Ruby binding
+%bcond_without	ruby		# Ruby binding
 #
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
@@ -87,7 +88,7 @@ BuildRequires:	python
 BuildRequires:	python-devel
 %endif
 BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.322
 %if %{with ruby}
 BuildRequires:	ruby
 BuildRequires:	ruby-devel
@@ -277,6 +278,7 @@ Summary:	PHP bindings for libguestfs
 Summary(pl.UTF-8):	Wiązania PHP do libguestfs
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{version}-%{release}
+%{?requires_php_extension}
 
 %description -n php-guestfs
 PHP bindings for libguestfs.
@@ -295,6 +297,19 @@ Python bindings for libguestfs.
 
 %description -n python-libguestfs -l pl.UTF-8
 Wiązania Pythona do libguestfs.
+
+%package -n ruby-libguestfs
+Summary:	Ruby bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania języka Ruby do libguestfs
+Group:		Development/Languages
+Requires:	%{name} = %{version}-%{release}
+%{?ruby_ver_requires_eq}
+
+%description -n ruby-libguestfs
+Ruby bindings for libguestfs.
+
+%description -n ruby-libguestfs -l pl.UTF-8
+Wiązania języka Ruby do libguestfs.
 
 %package -n bash-completion-libguestfs
 Summary:	bash-completion for libguestfs tools
@@ -333,6 +348,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	--with-qemu=qemu \
 	--enable-install-daemon \
 	--disable-appliance \
+	%{!?with_erlang:--disable-erlang} \
 	%{!?with_haskell:--disable-haskell} \
 	%{!?with_ocaml:--disable-ocaml} \
 	%{!?with_perl:--disable-perl} \
@@ -596,10 +612,12 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man3/guestfs-perl.3*
 %endif
 
+%if %{with php}
 %files -n php-guestfs
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/php/conf.d/guestfs_php.ini
 %attr(755,root,root) %{_libdir}/php/guestfs_php.so
+%endif
 
 %if %{with python}
 %files -n python-libguestfs
@@ -609,6 +627,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/guestfs-python.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-python.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-python.3*
+%endif
+
+%if %{with ruby}
+%files -n ruby-libguestfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{ruby_sitearchdir}/_guestfs.so
+%{ruby_sitelibdir}/guestfs.rb
+%{_mandir}/man3/guestfs-ruby.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-ruby.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-ruby.3*
 %endif
 
 %files -n bash-completion-libguestfs
