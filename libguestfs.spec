@@ -57,7 +57,7 @@ BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
 BuildRequires:	ocaml-findlib
-# ocaml-gettext
+BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
 %endif
 BuildRequires:	pcre-devel
