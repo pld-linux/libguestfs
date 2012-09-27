@@ -1,10 +1,10 @@
 # TODO:
-# - haskell, erlang bindings
+# - haskell bindings
 # - systemtap probes
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
-%bcond_with	erlang		# Erlang binding
+%bcond_without	erlang		# Erlang binding
 %bcond_with	haskell		# Haskell (GHC) binding
 %bcond_without	java		# Java binding
 %bcond_without	ocaml		# OCaml binding and tools
@@ -36,6 +36,8 @@ BuildRequires:	automake
 BuildRequires:	cdrkit-mkisofs
 BuildRequires:	cpio
 BuildRequires:	db-utils
+# erl_interface package
+%{?with_erlang:BuildRequires:	erlang}
 #BuildRequires:	febootstrap >= 3.0
 BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
@@ -210,6 +212,18 @@ edycji plików wewnątrz gości, zmian skryptowych w VM-ach,
 monitorowania statystyk używanego/dostępnego miejsca na dyskach, P2V,
 V2V, wykonywania częściowych kopii zapasowych, klonowania VM-ów i
 wielu podobnych operacji.
+
+%package -n erlang-libguestfs
+Summary:	Erlang bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania Erlanga do libguestfs
+Group:		Development/Languages
+Requires:	%{name} = %{version}-%{release}
+
+%description -n erlang-libguestfs
+Erlang bindings for libguestfs.
+
+%description -n erlang-libguestfs -l pl.UTF-8
+Wiązania Erlanga do libguestfs.
 
 %package -n java-libguestfs
 Summary:	Java bindings for libguestfs
@@ -555,6 +569,16 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-make-fs.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar.1*
 %lang(uk) %{_mandir}/uk/man1/virt-win-reg.1*
+%endif
+
+%if %{with erlang}
+%files -n erlang-libguestfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/erl-guestfs
+%{_libdir}/erlang/lib/libguestfs-%{version}
+%{_mandir}/man3/guestfs-erlang.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-erlang.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-erlang.3*
 %endif
 
 %if %{with java}
