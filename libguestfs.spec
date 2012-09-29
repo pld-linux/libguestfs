@@ -1,6 +1,7 @@
 # TODO:
 # - finish haskell bindings
 # - systemtap probes
+# - PLD appliance support? (needs at least package list adjustment)
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
