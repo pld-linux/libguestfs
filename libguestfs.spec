@@ -1,11 +1,11 @@
 # TODO:
-# - haskell bindings
+# - finish haskell bindings
 # - systemtap probes
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
 %bcond_without	erlang		# Erlang binding
-%bcond_with	haskell		# Haskell (GHC) binding
+%bcond_with	haskell		# Haskell (GHC) binding [incomplete]
 %bcond_without	java		# Java binding
 %bcond_without	ocaml		# OCaml binding and tools
 %bcond_without	perl		# Perl binding
