@@ -20,12 +20,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.18.10
+Version:	1.18.11
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.18-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	638f13490c1036307c9defdbe8fa40a6
+# Source0-md5:	1846ceed04167397cc0ff3d1e7e63a0b
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
