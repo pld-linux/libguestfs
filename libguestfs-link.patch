@@ -11,3 +11,13 @@
  
  # All the headers except <guestfs-gobject.h> should be installed
  # in the subdirectory.
+--- libguestfs-1.20.1/src/Makefile.am.orig	2012-12-20 16:40:46.000000000 +0100
++++ libguestfs-1.20.1/src/Makefile.am	2013-01-06 19:21:18.854294111 +0100
+@@ -178,6 +178,7 @@
+ libguestfs_la_LIBADD = \
+ 	$(PCRE_LIBS) $(MAGIC_LIBS) \
+ 	$(LIBVIRT_LIBS) $(LIBXML2_LIBS) \
++	$(SELINUX_LIB) \
+ 	../gnulib/lib/libgnu.la \
+ 	$(GETADDRINFO_LIB) \
+ 	$(HOSTENT_LIB) \

@@ -1,0 +1,29 @@
+--- libguestfs-1.20.1/ocaml/Makefile.am.orig	2012-12-20 16:40:46.000000000 +0100
++++ libguestfs-1.20.1/ocaml/Makefile.am	2013-01-06 18:51:22.020998229 +0100
+@@ -96,9 +96,23 @@
+ endif
+ 
+ TESTS = run-bindtests \
+-	$(sort \
+-		$(patsubst %,%.bc,$(test_progs)) \
+-		$(patsubst %,%.opt,$(test_progs)))
++	t/guestfs_005_load.bc \
++	t/guestfs_080_optargs.bc \
++	t/guestfs_400_events.bc \
++	t/guestfs_005_load.opt \
++	t/guestfs_080_optargs.opt \
++	t/guestfs_400_events.opt
++if ENABLE_APPLIANCE
++TESTS += \
++	t/guestfs_010_basic.bc \
++	t/guestfs_070_threads.bc \
++	t/guestfs_400_progress.bc \
++	t/guestfs_500_mount_local.bc \
++	t/guestfs_010_basic.opt \
++	t/guestfs_070_threads.opt \
++	t/guestfs_400_progress.opt \
++	t/guestfs_500_mount_local.opt
++endif
+ 
+ noinst_DATA += \
+ 	bindtests.bc bindtests.opt \

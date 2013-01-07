@@ -1,18 +1,18 @@
---- libguestfs-1.18.8/daemon/Makefile.am.orig	2012-09-22 18:00:42.405492006 +0200
-+++ libguestfs-1.18.8/daemon/Makefile.am	2012-09-22 18:02:10.678823499 +0200
-@@ -171,6 +171,7 @@
- 	libprotocol.a \
+--- libguestfs-1.20.1/daemon/Makefile.am.orig	2013-01-06 17:34:27.347761080 +0100
++++ libguestfs-1.20.1/daemon/Makefile.am	2013-01-06 17:35:26.284426518 +0100
+@@ -189,6 +189,7 @@
+ 	$(YAJL_LIBS) \
  	$(SELINUX_LIB) \
  	$(AUGEAS_LIBS) \
 +	$(LIBXML2_LIBS) \
+ 	$(HIVEX_LIBS) \
  	$(top_builddir)/gnulib/lib/.libs/libgnu.a \
  	$(GETADDRINFO_LIB) \
- 	$(HOSTENT_LIB) \
-@@ -181,6 +182,6 @@
- 	$(SERVENT_LIB)
+@@ -203,6 +204,7 @@
+ guestfsd_CFLAGS = \
+ 	$(WARN_CFLAGS) $(WERROR_CFLAGS) \
+ 	$(AUGEAS_CFLAGS) \
++	$(LIBXML2_CFLAGS) \
+ 	$(HIVEX_CFLAGS) \
+ 	$(YAJL_CFLAGS)
  
- guestfsd_CPPFLAGS = -I$(top_srcdir)/gnulib/lib -I$(top_builddir)/gnulib/lib
--guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS)
-+guestfsd_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(AUGEAS_CFLAGS) $(LIBXML2_CFLAGS)
- 
- .PHONY: force

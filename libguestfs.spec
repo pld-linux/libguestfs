@@ -1,5 +1,5 @@
 # TODO:
-# - finish haskell bindings
+# - finish haskell bindings (when finished upstream, not ready as of 1.20.1)
 # - systemtap probes
 # - PLD appliance support? (needs at least package list adjustment)
 #
@@ -8,6 +8,7 @@
 %bcond_without	erlang		# Erlang binding
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete]
 %bcond_without	java		# Java binding
+%bcond_without	lua		# Lua binding
 %bcond_without	ocaml		# OCaml binding and tools
 %bcond_without	perl		# Perl binding
 %bcond_without	perltools	# Perl tools
@@ -15,23 +16,26 @@
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
 #
+
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.18.11
+Version:	1.20.1
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.18-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	1846ceed04167397cc0ff3d1e7e63a0b
+Source0:	http://libguestfs.org/download/1.20-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	6fa512ff7c31dbb1812e2d81876bf7be
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
+Patch3:		%{name}-am.patch
 URL:		http://libguestfs.org/
+BuildRequires:	acl-devel
 BuildRequires:	attr-devel
-BuildRequires:	augeas-devel
+BuildRequires:	augeas-devel >= 0.5.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	cdrkit-mkisofs
@@ -39,23 +43,29 @@ BuildRequires:	cpio
 BuildRequires:	db-utils
 # erl_interface package
 %{?with_erlang:BuildRequires:	erlang}
-#BuildRequires:	febootstrap >= 3.0
+#BuildRequires:	febootstrap >= 3.20
 BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
 BuildRequires:	gtk-doc >= 1.14
-BuildRequires:	hivex-devel
+BuildRequires:	hivex-devel >= 1.2.7
 %{?with_java:BuildRequires:	jdk}
+BuildRequires:	libcap-devel
 BuildRequires:	libconfig-devel
 BuildRequires:	libfuse-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libtool
-BuildRequires:	libvirt-devel
+BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
+%if %{with lua}
+# use 5.2 as 5.1 packaging in PLD was incompatible with what's expected by configure
+BuildRequires:	lua52
+BuildRequires:	lua52-devel
+%endif
 BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
@@ -73,7 +83,7 @@ BuildRequires:	perl-Test-Simple
 %if %{with perltools}
 BuildRequires:	perl-String-ShellQuote
 BuildRequires:	perl-Sys-Virt
-BuildRequires:	perl-hivex
+BuildRequires:	perl-hivex >= 1.2.7
 BuildRequires:	perl-libintl
 BuildRequires:	perl-modules
 BuildRequires:	perl(Data::Dumper)
@@ -97,7 +107,8 @@ BuildRequires:	ruby
 BuildRequires:	ruby-devel
 BuildRequires:	ruby-rake
 %endif
-Requires:	qemu-common
+BuildRequires:	yajl-devel >= 2
+Requires:	qemu-common >= 1.1.0
 Suggests:	db-utils
 Suggests:	icoutils
 Suggests:	netpbm-progs
@@ -249,6 +260,18 @@ Java bindings for libguestfs - documentation.
 %description -n java-libguestfs-javadoc -l pl.UTF-8
 Wiązania Javy do libguestfs - dokumentacja.
 
+%package -n lua-libguestfs
+Summary:	Lua bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania języka Lua do libguestfs
+Group:		Development/Languages
+Requires:	%{name} = %{version}-%{release}
+
+%description -n lua-libguestfs
+Lua bindings for libguestfs.
+
+%description -n lua-libguestfs -l pl.UTF-8
+Wiązania języka Lua do libguestfs.
+
 %package -n ocaml-libguestfs
 Summary:	OCaml bindings for libguestfs
 Summary(pl.UTF-8):	Wiązania OCamla do libguestfs
@@ -280,7 +303,7 @@ Group:		Development/Languages/Perl
 Requires:	%{name} = %{version}-%{release}
 Suggests:	perl-Sys-Virt
 Suggests:	perl-XML-XPath
-Suggests:	perl-hivex
+Suggests:	perl-hivex >= 1.2.7
 
 %description -n perl-libguestfs
 Perl bindings for libguestfs.
@@ -343,6 +366,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__libtoolize}
@@ -352,6 +376,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %{__automake}
 %configure \
 	vmchannel_test=no \
+	%{?with_lua:LUA=/usr/bin/lua5.2} \
 	PBMTEXT=/usr/bin/pbmtext \
 	PNMTOPNG=/usr/bin/pnmtopng \
 	BMPTOPNM=/usr/bin/bmptopnm \
@@ -359,12 +384,13 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	WRESTOOL=/usr/bin/wrestool \
 	QEMU=%{_bindir}/qemu \
 	--with-html-dir=%{_gtkdocdir} \
-	--with-java-home=%{?with_java:%{java_home}}%{!?with_java:no} \
+	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-qemu=qemu \
 	--enable-install-daemon \
 	--disable-appliance \
 	%{!?with_erlang:--disable-erlang} \
 	%{!?with_haskell:--disable-haskell} \
+	%{!?with_lua:--disable-lua} \
 	%{!?with_ocaml:--disable-ocaml} \
 	%{!?with_perl:--disable-perl} \
 	%{!?with_php:--disable-php} \
@@ -384,8 +410,13 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	phpdir=%{_sysconfdir}/php/conf.d
 
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la \
-	$RPM_BUILD_ROOT%{py_sitedir}/*.la
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+%if %{with lua}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lua/*/*.la
+%endif
+%if %{with python}
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
+%endif
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -407,9 +438,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS BUGS ChangeLog README RELEASE-NOTES ROADMAP TODO
+%doc AUTHORS BUGS ChangeLog README ROADMAP TODO
 %attr(755,root,root) %{_libdir}/libguestfs.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libguestfs.so.0
+%{_mandir}/man1/guestfs-release-notes.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-release-notes.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-release-notes.1*
 
 %files devel
 %defattr(644,root,root,755)
@@ -493,6 +527,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-rescue.1*
 %{_mandir}/man1/virt-tar-in.1*
 %{_mandir}/man1/virt-tar-out.1*
+%{_mandir}/man8/guestfsd.8*
 %lang(ja) %{_mandir}/ja/man1/guestfish.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-faq.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-performance.1*
@@ -596,6 +631,15 @@ rm -rf $RPM_BUILD_ROOT
 %files -n java-libguestfs-javadoc
 %defattr(644,root,root,755)
 %{_javadocdir}/libguestfs-java-%{version}
+%endif
+
+%if %{with lua}
+%files -n lua-libguestfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/lua/*/guestfs.so
+%{_mandir}/man3/guestfs-lua.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-lua.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-lua.3*
 %endif
 
 %if %{with ocaml}
