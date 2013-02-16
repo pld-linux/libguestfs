@@ -1,12 +1,12 @@
 # TODO:
-# - finish haskell bindings (when finished upstream, not ready as of 1.20.1)
+# - finish haskell bindings (when finished upstream, not ready as of 1.20.2)
 # - systemtap probes
 # - PLD appliance support? (needs at least package list adjustment)
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
 %bcond_without	erlang		# Erlang binding
-%bcond_with	haskell		# Haskell (GHC) binding [incomplete]
+%bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
 %bcond_without	java		# Java binding
 %bcond_without	lua		# Lua binding
 %bcond_without	ocaml		# OCaml binding and tools
@@ -22,12 +22,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.20.1
+Version:	1.20.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.20-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	6fa512ff7c31dbb1812e2d81876bf7be
+# Source0-md5:	f0742af1cf0d8df7068518da73601d5b
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -480,6 +480,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/guestfs-gobject.h
 %{_includedir}/guestfs-gobject
 %{_datadir}/gir-1.0/Guestfs-1.0.gir
+%{_pkgconfigdir}/libguestfs-gobject-1.0.pc
 
 %if %{with static_libs}
 %files gobject-static
