@@ -5,6 +5,7 @@
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
+%bcond_with	appliance	# appliance build (no PLD support)
 %bcond_without	erlang		# Erlang binding
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
 %bcond_without	java		# Java binding
@@ -22,12 +23,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.20.3
+Version:	1.20.4
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.20-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	a5717d7d3975a141c553dd8a8633d5dd
+# Source0-md5:	169bcb12858781bae1b2646d675b5315
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -43,7 +44,11 @@ BuildRequires:	cpio
 BuildRequires:	db-utils
 # erl_interface package
 %{?with_erlang:BuildRequires:	erlang}
+%if %{with appliance}
 #BuildRequires:	febootstrap >= 3.20
+# or
+#BuildRequires:	supermin >= 4.1.0
+%endif
 BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
 BuildRequires:	glib2-devel >= 1:2.26.0
@@ -387,7 +392,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-qemu=qemu \
 	--enable-install-daemon \
-	--disable-appliance \
+	%{!?with_appliance:--disable-appliance} \
 	%{!?with_erlang:--disable-erlang} \
 	%{!?with_haskell:--disable-haskell} \
 	%{!?with_lua:--disable-lua} \
@@ -507,13 +512,25 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-tar-in
 %attr(755,root,root) %{_bindir}/virt-tar-out
 %attr(755,root,root) %{_sbindir}/guestfsd
+%attr(755,root,root) %{_sbindir}/libguestfs-make-fixed-appliance
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
+/lib/udev/rules.d/99-guestfs-serial.rules
+%dir %{_libdir}/guestfs
+%dir %{_libdir}/guestfs/supermin.d
+%{_libdir}/guestfs/supermin.d/daemon.img
+%{_libdir}/guestfs/supermin.d/init.img
+%{_libdir}/guestfs/supermin.d/udev-rules.img
+%if %{with appliance}
+%{_libdir}/guestfs/supermin.d/base.img
+%{_libdir}/guestfs/supermin.d/hostfiles
+%endif
 %{_mandir}/man1/guestfish.1*
 %{_mandir}/man1/guestfs-faq.1*
 %{_mandir}/man1/guestfs-performance.1*
 %{_mandir}/man1/guestfs-recipes.1*
 %{_mandir}/man1/guestfs-testing.1*
 %{_mandir}/man1/guestmount.1*
+%{_mandir}/man1/libguestfs-make-fixed-appliance.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
 %{_mandir}/man1/virt-alignment-scan.1*
 %{_mandir}/man1/virt-cat.1*
@@ -535,7 +552,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/guestfs-recipes.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-testing.1*
 %lang(ja) %{_mandir}/ja/man1/guestmount.1*
-#%lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
+%lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
 %lang(ja) %{_mandir}/ja/man1/virt-cat.1*
@@ -556,7 +573,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/guestfs-recipes.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-testing.1*
 %lang(uk) %{_mandir}/uk/man1/guestmount.1*
-#%lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
+%lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
 %lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
 %lang(uk) %{_mandir}/uk/man1/virt-cat.1*
