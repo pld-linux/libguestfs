@@ -23,12 +23,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.20.4
+Version:	1.20.5
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.20-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	169bcb12858781bae1b2646d675b5315
+# Source0-md5:	a3633aea4c5e21588e72a88019acd739
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -111,6 +111,8 @@ BuildRequires:	rpmbuild(macros) >= 1.322
 BuildRequires:	ruby
 BuildRequires:	ruby-devel
 BuildRequires:	ruby-rake
+BuildRequires:	ruby-rdoc
+BuildRequires:	ruby-rubygems
 %endif
 BuildRequires:	yajl-devel >= 2
 Requires:	qemu-common >= 1.1.0
@@ -719,8 +721,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with ruby}
 %files -n ruby-libguestfs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{ruby_sitearchdir}/_guestfs.so
-%{ruby_sitelibdir}/guestfs.rb
+%attr(755,root,root) %{ruby_vendorarchdir}/_guestfs.so
+%{ruby_vendorlibdir}/guestfs.rb
 %{_mandir}/man3/guestfs-ruby.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-ruby.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-ruby.3*
