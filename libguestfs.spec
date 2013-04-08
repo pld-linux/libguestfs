@@ -16,7 +16,6 @@
 %bcond_without	php		# PHP binding
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
-#
 
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
@@ -40,7 +39,6 @@ BuildRequires:	augeas-devel >= 0.5.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	cdrkit-mkisofs
-BuildRequires:	cpio
 BuildRequires:	db-utils
 # erl_interface package
 %{?with_erlang:BuildRequires:	erlang}
@@ -86,17 +84,17 @@ BuildRequires:	perl-ExtUtils-MakeMaker
 BuildRequires:	perl-Test-Simple
 %endif
 %if %{with perltools}
-BuildRequires:	perl-String-ShellQuote
-BuildRequires:	perl-Sys-Virt
-BuildRequires:	perl-hivex >= 1.2.7
-BuildRequires:	perl-libintl
-BuildRequires:	perl-modules
 BuildRequires:	perl(Data::Dumper)
 BuildRequires:	perl(Getopt::Long)
 BuildRequires:	perl(Locale::TextDomain)
 BuildRequires:	perl(Pod::Man)
 BuildRequires:	perl(Pod::Simple)
 BuildRequires:	perl(Pod::Usage)
+BuildRequires:	perl-String-ShellQuote
+BuildRequires:	perl-Sys-Virt
+BuildRequires:	perl-hivex >= 1.2.7
+BuildRequires:	perl-libintl
+BuildRequires:	perl-modules
 %endif
 %{?with_php:BuildRequires:	php-devel}
 BuildRequires:	pkgconfig
@@ -106,8 +104,9 @@ BuildRequires:	python
 BuildRequires:	python-devel
 %endif
 BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.322
+BuildRequires:	rpmbuild(macros) >= 1.656
 %if %{with ruby}
+BuildRequires:	rpm-rubyprov
 BuildRequires:	ruby
 BuildRequires:	ruby-devel
 BuildRequires:	ruby-rake
