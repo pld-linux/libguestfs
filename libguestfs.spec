@@ -100,12 +100,14 @@ BuildRequires:	perl-hivex >= 1.2.7
 BuildRequires:	perl-libintl
 BuildRequires:	perl-modules
 %endif
+%{?with_php:BuildRequires:	/usr/bin/php}
 %{?with_php:BuildRequires:	php-devel}
 BuildRequires:	pkgconfig
 BuildRequires:	po4a
 %if %{with python}
 BuildRequires:	python
 BuildRequires:	python-devel
+BuildRequires:	rpm-pythonprov
 %endif
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.656
