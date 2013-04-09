@@ -64,6 +64,7 @@ BuildRequires:	libtool
 BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
+%{?with_java:BuildRequires:	rpm-javaprov}
 %if %{with lua}
 # use 5.2 as 5.1 packaging in PLD was incompatible with what's expected by configure
 BuildRequires:	lua52
@@ -72,6 +73,8 @@ BuildRequires:	lua52-devel
 BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
+BuildRequires:	ocaml-camlp4
+BuildRequires:	ocaml-fileutils
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
@@ -82,6 +85,7 @@ BuildRequires:	perl-tools-pod
 %if %{with perl}
 BuildRequires:	perl-ExtUtils-MakeMaker
 BuildRequires:	perl-Test-Simple
+BuildRequires:	rpm-perlprov
 %endif
 %if %{with perltools}
 BuildRequires:	perl(Data::Dumper)
