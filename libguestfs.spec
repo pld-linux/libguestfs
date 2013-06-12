@@ -22,12 +22,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.20.5
-Release:	2
+Version:	1.22.2
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.20-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	a3633aea4c5e21588e72a88019acd739
+Source0:	http://libguestfs.org/download/1.22-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	cc95d9619a32586990a2dd43bb6b77ca
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -365,7 +365,7 @@ Wiązania języka Ruby do libguestfs.
 Summary:	bash-completion for libguestfs tools
 Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
 Group:		Applications/Shells
-Requires:	bash-completion
+Requires:	bash-completion >= 2.0
 
 %description -n bash-completion-libguestfs
 bash-completion for guestfish tool.
@@ -504,6 +504,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/guestfish
 %attr(755,root,root) %{_bindir}/guestmount
+%attr(755,root,root) %{_bindir}/guestunmount
 %attr(755,root,root) %{_bindir}/libguestfs-test-tool
 %attr(755,root,root) %{_bindir}/virt-alignment-scan
 %attr(755,root,root) %{_bindir}/virt-cat
@@ -537,6 +538,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/guestfs-recipes.1*
 %{_mandir}/man1/guestfs-testing.1*
 %{_mandir}/man1/guestmount.1*
+%{_mandir}/man1/guestunmount.1*
 %{_mandir}/man1/libguestfs-make-fixed-appliance.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
 %{_mandir}/man1/virt-alignment-scan.1*
@@ -559,6 +561,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/guestfs-recipes.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-testing.1*
 %lang(ja) %{_mandir}/ja/man1/guestmount.1*
+%lang(ja) %{_mandir}/ja/man1/guestunmount.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
@@ -580,6 +583,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/guestfs-recipes.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-testing.1*
 %lang(uk) %{_mandir}/uk/man1/guestmount.1*
+%lang(uk) %{_mandir}/uk/man1/guestunmount.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
 %lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
@@ -693,15 +697,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -n perl-libguestfs
 %defattr(644,root,root,755)
 %{perl_vendorarch}/Sys/Guestfs.pm
-%dir %{perl_vendorarch}/Sys/Guestfs
-%{perl_vendorarch}/Sys/Guestfs/Lib.pm
 %{perl_vendorarch}/Sys/bindtests.pl
 %dir %{perl_vendorarch}/auto/Sys/Guestfs
 %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.bs
 %attr(755,root,root) %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.so
 %{_mandir}/man3/guestfs-perl.3*
 %{_mandir}/man3/Sys::Guestfs.3pm*
-%{_mandir}/man3/Sys::Guestfs::Lib.3pm*
 %lang(ja) %{_mandir}/ja/man3/guestfs-perl.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-perl.3*
 %endif
@@ -735,4 +736,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n bash-completion-libguestfs
 %defattr(644,root,root,755)
-%attr(755,root,root) /etc/bash_completion.d/guestfish-bash-completion.sh
+%{_datadir}/bash-completion/completions/*
