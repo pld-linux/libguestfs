@@ -22,16 +22,17 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.22.2
+Version:	1.22.3
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.22-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	cc95d9619a32586990a2dd43bb6b77ca
+# Source0-md5:	d0f7d46b8c5f3ea7554bb1eb45a894e4
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-am.patch
+Patch4:		%{name}-completionsdir.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -379,6 +380,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{__libtoolize}
@@ -395,6 +397,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	PAMCUT=/usr/bin/pamcut \
 	WRESTOOL=/usr/bin/wrestool \
 	QEMU=%{_bindir}/qemu \
+	--with-completionsdir=%{_datadir}/bash-completion/completions \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-qemu=qemu \
@@ -433,6 +436,9 @@ rm -rf $RPM_BUILD_ROOT
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
+
+# obsolete utilities
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/virt-{list-filesystems,list-partitions,make-fs,tar,win-reg}.1
 
 %find_lang %{name}
 
@@ -613,28 +619,6 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-sparsify.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sysprep.1*
 %endif
-%if %{with perltools}
-%attr(755,root,root) %{_bindir}/virt-list-filesystems
-%attr(755,root,root) %{_bindir}/virt-list-partitions
-%attr(755,root,root) %{_bindir}/virt-make-fs
-%attr(755,root,root) %{_bindir}/virt-tar
-%attr(755,root,root) %{_bindir}/virt-win-reg
-%{_mandir}/man1/virt-list-filesystems.1*
-%{_mandir}/man1/virt-list-partitions.1*
-%{_mandir}/man1/virt-make-fs.1*
-%{_mandir}/man1/virt-tar.1*
-%{_mandir}/man1/virt-win-reg.1*
-%lang(ja) %{_mandir}/ja/man1/virt-list-filesystems.1*
-%lang(ja) %{_mandir}/ja/man1/virt-list-partitions.1*
-%lang(ja) %{_mandir}/ja/man1/virt-make-fs.1*
-%lang(ja) %{_mandir}/ja/man1/virt-tar.1*
-%lang(ja) %{_mandir}/ja/man1/virt-win-reg.1*
-%lang(uk) %{_mandir}/uk/man1/virt-list-filesystems.1*
-%lang(uk) %{_mandir}/uk/man1/virt-list-partitions.1*
-%lang(uk) %{_mandir}/uk/man1/virt-make-fs.1*
-%lang(uk) %{_mandir}/uk/man1/virt-tar.1*
-%lang(uk) %{_mandir}/uk/man1/virt-win-reg.1*
-%endif
 
 %if %{with erlang}
 %files -n erlang-libguestfs
@@ -736,4 +720,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n bash-completion-libguestfs
 %defattr(644,root,root,755)
-%{_datadir}/bash-completion/completions/*
+%{_datadir}/bash-completion/completions/guestfish
+%{_datadir}/bash-completion/completions/guestmount
+%{_datadir}/bash-completion/completions/virt-*
