@@ -22,12 +22,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.22.4
+Version:	1.22.5
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.22-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	8317fd78d47afb05d11200a3e747bef1
+# Source0-md5:	e0758798bb636671980f6a45f93f07e6
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -110,6 +110,7 @@ BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 %endif
+BuildRequires:	qemu-img
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.656
 %if %{with ruby}
