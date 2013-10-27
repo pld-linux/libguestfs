@@ -78,7 +78,7 @@ BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
 BuildRequires:	ocaml-camlp4
-BuildRequires:	ocaml-fileutils
+BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
