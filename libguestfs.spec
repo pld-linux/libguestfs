@@ -7,6 +7,7 @@
 %bcond_with	static_libs	# build static libraries
 %bcond_with	appliance	# appliance build (no PLD support)
 %bcond_without	erlang		# Erlang binding
+%bcond_without	golang		# Go language binding
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
 %bcond_without	java		# Java binding
 %bcond_without	lua		# Lua binding
@@ -16,27 +17,28 @@
 %bcond_without	php		# PHP binding
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
+%bcond_without	systemtap	# systemtap/dtrace probes
 
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.22.6
+Version:	1.24.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.22-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	b87d86f7c0f07bebb699973580e312d5
+Source0:	http://libguestfs.org/download/1.24-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	ead2f2bc4018cb205c1257e776a3bdb7
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
-Patch3:		%{name}-am.patch
-Patch4:		%{name}-completionsdir.patch
+#Patch3:		%{name}-am.patch
+Patch3:		%{name}-completionsdir.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
-BuildRequires:	augeas-devel >= 0.5.0
+BuildRequires:	augeas-devel >= 1.0.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	cdrkit-mkisofs
@@ -52,6 +54,7 @@ BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
+%{?with_golang:BuildRequires:	golang}
 BuildRequires:	gperf
 BuildRequires:	gtk-doc >= 1.14
 BuildRequires:	hivex-devel >= 1.2.7
@@ -121,6 +124,9 @@ BuildRequires:	ruby-rake
 BuildRequires:	ruby-rdoc
 BuildRequires:	ruby-rubygems
 %endif
+# libsystemd-journal
+BuildRequires:	systemd-devel
+%{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	yajl-devel >= 2
 Requires:	qemu-common >= 1.1.0
 Suggests:	db-utils
@@ -224,6 +230,7 @@ Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 %{?with_ocaml:Requires:	ocaml-libguestfs = %{version}-%{release}}
 %{?with_perltools:Requires:	perl-libguestfs = %{version}-%{release}}
+Requires:	augeas-libs >= 1.0.0
 
 %description tools
 libguestfs tools for accessing and modifying virtual machine (VM) disk
@@ -250,6 +257,18 @@ Erlang bindings for libguestfs.
 
 %description -n erlang-libguestfs -l pl.UTF-8
 Wiązania Erlanga do libguestfs.
+
+%package -n golang-libguestfs
+Summary:	Go language bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania języka Go do libguestfs
+Group:		Development/Languages
+Requires:	%{name} = %{version}-%{release}
+
+%description -n golang-libguestfs
+Go language bindings for libguestfs.
+
+%description -n golang-libguestfs -l pl.UTF-8
+Wiązania języka Go do libguestfs.
 
 %package -n java-libguestfs
 Summary:	Java bindings for libguestfs
@@ -381,7 +400,6 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 %{__libtoolize}
@@ -405,11 +423,13 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	--enable-install-daemon \
 	%{!?with_appliance:--disable-appliance} \
 	%{!?with_erlang:--disable-erlang} \
+	%{!?with_golang:--disable-golang} \
 	%{!?with_haskell:--disable-haskell} \
 	%{!?with_lua:--disable-lua} \
 	%{!?with_ocaml:--disable-ocaml} \
 	%{!?with_perl:--disable-perl} \
 	%{!?with_php:--disable-php} \
+	%{!?with_systemtap:--disable-probes} \
 	%{!?with_python:--disable-python} \
 	%{!?with_ruby:--disable-ruby} \
 	--disable-silent-rules \
@@ -511,6 +531,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/guestunmount
 %attr(755,root,root) %{_bindir}/libguestfs-test-tool
 %attr(755,root,root) %{_bindir}/virt-alignment-scan
+%attr(755,root,root) %{_bindir}/virt-builder
 %attr(755,root,root) %{_bindir}/virt-cat
 %attr(755,root,root) %{_bindir}/virt-copy-in
 %attr(755,root,root) %{_bindir}/virt-copy-out
@@ -546,6 +567,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/libguestfs-make-fixed-appliance.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
 %{_mandir}/man1/virt-alignment-scan.1*
+%{_mandir}/man1/virt-builder.1*
 %{_mandir}/man1/virt-cat.1*
 %{_mandir}/man1/virt-copy-in.1*
 %{_mandir}/man1/virt-copy-out.1*
@@ -558,6 +580,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-rescue.1*
 %{_mandir}/man1/virt-tar-in.1*
 %{_mandir}/man1/virt-tar-out.1*
+%{_mandir}/man5/libguestfs-tools.conf.5*
 %{_mandir}/man8/guestfsd.8*
 %lang(ja) %{_mandir}/ja/man1/guestfish.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-faq.1*
@@ -569,6 +592,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
+%lang(ja) %{_mandir}/ja/man1/virt-builder.1*
 %lang(ja) %{_mandir}/ja/man1/virt-cat.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-out.1*
@@ -581,6 +605,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-rescue.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-out.1*
+%lang(ja) %{_mandir}/ja/man5/libguestfs-tools.conf.5*
 %lang(uk) %{_mandir}/uk/man1/guestfish.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-faq.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-performance.1*
@@ -591,6 +616,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
 %lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
+%lang(uk) %{_mandir}/uk/man1/virt-builder.1*
 %lang(uk) %{_mandir}/uk/man1/virt-cat.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-out.1*
@@ -603,6 +629,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-rescue.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-out.1*
+%lang(uk) %{_mandir}/uk/man5/libguestfs-tools.conf.5*
 %if %{with ocaml}
 %attr(755,root,root) %{_bindir}/virt-resize
 %attr(755,root,root) %{_bindir}/virt-sparsify
@@ -651,6 +678,18 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man3/guestfs-erlang.3*
 %endif
 
+%if %{with golang}
+%files -n golang-libguestfs
+%defattr(644,root,root,755)
+%dir %{_libdir}/golang/pkg/linux_*/libguestfs.org
+%dir %{_libdir}/golang/pkg/linux_*/libguestfs.org/guestfs
+%{_libdir}/golang/pkg/linux_*/libguestfs.org/guestfs/guestfs.a
+%{_libdir}/golang/src/pkg/libguestfs.org
+%{_mandir}/man3/guestfs-golang.3*
+%lang(ja) %{_mandir}/ja/man3/guestfs-golang.3*
+%lang(uk) %{_mandir}/uk/man3/guestfs-golang.3*
+%endif
+
 %if %{with java}
 %files -n java-libguestfs
 %defattr(644,root,root,755)
@@ -664,7 +703,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n java-libguestfs-javadoc
 %defattr(644,root,root,755)
-%{_javadocdir}/libguestfs-java-%{version}
+%{_javadocdir}/libguestfs
 %endif
 
 %if %{with lua}
