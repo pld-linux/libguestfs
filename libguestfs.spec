@@ -1,6 +1,5 @@
 # TODO:
 # - finish haskell bindings (when finished upstream, not ready as of 1.20.2)
-# - systemtap probes
 # - PLD appliance support? (needs at least package list adjustment)
 #
 # Conditional build:
@@ -24,16 +23,15 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.24.0
+Version:	1.24.1
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.24-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	ead2f2bc4018cb205c1257e776a3bdb7
+# Source0-md5:	4f0de9e1a691c2b46c2175a5c19a0fd8
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
-#Patch3:		%{name}-am.patch
 Patch3:		%{name}-completionsdir.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
