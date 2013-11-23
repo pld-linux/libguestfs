@@ -118,6 +118,7 @@ BuildRequires:	rpmbuild(macros) >= 1.656
 BuildRequires:	rpm-rubyprov
 BuildRequires:	ruby
 BuildRequires:	ruby-devel
+BuildRequires:	ruby-irb
 BuildRequires:	ruby-rake
 BuildRequires:	ruby-rdoc
 BuildRequires:	ruby-rubygems
