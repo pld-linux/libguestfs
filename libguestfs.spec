@@ -23,12 +23,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.24.6
+Version:	1.24.8
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.24-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	91aebe8a6e4c6576e88af097e62705b0
+# Source0-md5:	4506538266bd19db721c71908790db35
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -544,18 +544,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-tar-in
 %attr(755,root,root) %{_bindir}/virt-tar-out
 %attr(755,root,root) %{_sbindir}/guestfsd
-%attr(755,root,root) %{_sbindir}/libguestfs-make-fixed-appliance
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
-/lib/udev/rules.d/99-guestfs-serial.rules
-%dir %{_libdir}/guestfs
-%dir %{_libdir}/guestfs/supermin.d
-%{_libdir}/guestfs/supermin.d/daemon.img
-%{_libdir}/guestfs/supermin.d/init.img
-%{_libdir}/guestfs/supermin.d/udev-rules.img
-%if %{with appliance}
-%{_libdir}/guestfs/supermin.d/base.img
-%{_libdir}/guestfs/supermin.d/hostfiles
-%endif
 %{_mandir}/man1/guestfish.1*
 %{_mandir}/man1/guestfs-faq.1*
 %{_mandir}/man1/guestfs-performance.1*
@@ -563,7 +552,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/guestfs-testing.1*
 %{_mandir}/man1/guestmount.1*
 %{_mandir}/man1/guestunmount.1*
-%{_mandir}/man1/libguestfs-make-fixed-appliance.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
 %{_mandir}/man1/virt-alignment-scan.1*
 %{_mandir}/man1/virt-builder.1*
@@ -588,7 +576,6 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/guestfs-testing.1*
 %lang(ja) %{_mandir}/ja/man1/guestmount.1*
 %lang(ja) %{_mandir}/ja/man1/guestunmount.1*
-%lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
 %lang(ja) %{_mandir}/ja/man1/virt-builder.1*
@@ -612,7 +599,6 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/guestfs-testing.1*
 %lang(uk) %{_mandir}/uk/man1/guestmount.1*
 %lang(uk) %{_mandir}/uk/man1/guestunmount.1*
-%lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
 %lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
 %lang(uk) %{_mandir}/uk/man1/virt-builder.1*
@@ -666,6 +652,20 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-win-reg.1*
 %endif
 
+%if %{with appliance}
+%attr(755,root,root) %{_sbindir}/libguestfs-make-fixed-appliance
+%{_mandir}/man1/libguestfs-make-fixed-appliance.1*
+%lang(ja) %{_mandir}/ja/man1/libguestfs-make-fixed-appliance.1*
+%lang(uk) %{_mandir}/uk/man1/libguestfs-make-fixed-appliance.1*
+/lib/udev/rules.d/99-guestfs-serial.rules
+%dir %{_libdir}/guestfs
+%dir %{_libdir}/guestfs/supermin.d
+%{_libdir}/guestfs/supermin.d/daemon.img
+%{_libdir}/guestfs/supermin.d/init.img
+%{_libdir}/guestfs/supermin.d/udev-rules.img
+%{_libdir}/guestfs/supermin.d/base.img
+%{_libdir}/guestfs/supermin.d/hostfiles
+%endif
 
 %if %{with erlang}
 %files -n erlang-libguestfs
