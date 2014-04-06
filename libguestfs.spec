@@ -23,12 +23,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.24.8
+Version:	1.26.0
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.24-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	4506538266bd19db721c71908790db35
+Source0:	http://libguestfs.org/download/1.26-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	fc00de0acc81441aeddcb1b8cc82b68a
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -39,15 +39,12 @@ BuildRequires:	attr-devel
 BuildRequires:	augeas-devel >= 1.0.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
 BuildRequires:	db-utils
 # erl_interface package
 %{?with_erlang:BuildRequires:	erlang}
-%if %{with appliance}
-#BuildRequires:	febootstrap >= 3.20
-# or
-#BuildRequires:	supermin >= 4.1.0
-%endif
+BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_haskell:BuildRequires:	ghc}
 BuildRequires:	glib2-devel >= 1:2.26.0
@@ -111,7 +108,7 @@ BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 %endif
-BuildRequires:	qemu-img
+BuildRequires:	qemu-img >= 1.0
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.656
 %if %{with ruby}
@@ -122,6 +119,9 @@ BuildRequires:	ruby-irb
 BuildRequires:	ruby-rake
 BuildRequires:	ruby-rdoc
 BuildRequires:	ruby-rubygems
+%endif
+%if %{with appliance}
+BuildRequires:	supermin >= 5.1.0
 %endif
 # libsystemd-journal
 BuildRequires:	systemd-devel
@@ -452,6 +452,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python}
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
 %endif
+# doc cleanup
+%{__rm} $RPM_BUILD_ROOT%{_docdir}/libguestfs/{example-*,virt-inspector.rng}
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -473,7 +475,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS BUGS ChangeLog README ROADMAP TODO
+%doc AUTHORS BUGS ChangeLog README TODO
 %attr(755,root,root) %{_libdir}/libguestfs.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libguestfs.so.0
 %{_mandir}/man1/guestfs-release-notes.1*
@@ -534,10 +536,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-cat
 %attr(755,root,root) %{_bindir}/virt-copy-in
 %attr(755,root,root) %{_bindir}/virt-copy-out
+%attr(755,root,root) %{_bindir}/virt-customize
 %attr(755,root,root) %{_bindir}/virt-df
+%attr(755,root,root) %{_bindir}/virt-diff
 %attr(755,root,root) %{_bindir}/virt-edit
 %attr(755,root,root) %{_bindir}/virt-filesystems
 %attr(755,root,root) %{_bindir}/virt-format
+%attr(755,root,root) %{_bindir}/virt-index-validate
 %attr(755,root,root) %{_bindir}/virt-inspector
 %attr(755,root,root) %{_bindir}/virt-ls
 %attr(755,root,root) %{_bindir}/virt-rescue
@@ -545,6 +550,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-tar-out
 %attr(755,root,root) %{_sbindir}/guestfsd
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/virt-builder
+%dir /etc/xdg/virt-builder
+%dir /etc/xdg/virt-builder/repos.d
+%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.gpg
 %{_mandir}/man1/guestfish.1*
 %{_mandir}/man1/guestfs-faq.1*
 %{_mandir}/man1/guestfs-performance.1*
@@ -558,10 +568,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-cat.1*
 %{_mandir}/man1/virt-copy-in.1*
 %{_mandir}/man1/virt-copy-out.1*
+%{_mandir}/man1/virt-customize.1*
 %{_mandir}/man1/virt-df.1*
+%{_mandir}/man1/virt-diff.1*
 %{_mandir}/man1/virt-edit.1*
 %{_mandir}/man1/virt-filesystems.1*
 %{_mandir}/man1/virt-format.1*
+%{_mandir}/man1/virt-index-validate.1*
 %{_mandir}/man1/virt-inspector.1*
 %{_mandir}/man1/virt-ls.1*
 %{_mandir}/man1/virt-rescue.1*
@@ -586,6 +599,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-edit.1*
 %lang(ja) %{_mandir}/ja/man1/virt-filesystems.1*
 %lang(ja) %{_mandir}/ja/man1/virt-format.1*
+%lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
 %lang(ja) %{_mandir}/ja/man1/virt-inspector.1*
 %lang(ja) %{_mandir}/ja/man1/virt-ls.1*
 %lang(ja) %{_mandir}/ja/man1/virt-rescue.1*
@@ -609,6 +623,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-edit.1*
 %lang(uk) %{_mandir}/uk/man1/virt-filesystems.1*
 %lang(uk) %{_mandir}/uk/man1/virt-format.1*
+%lang(uk) %{_mandir}/uk/man1/virt-index-validate.1*
 %lang(uk) %{_mandir}/uk/man1/virt-inspector.1*
 %lang(uk) %{_mandir}/uk/man1/virt-ls.1*
 %lang(uk) %{_mandir}/uk/man1/virt-rescue.1*
