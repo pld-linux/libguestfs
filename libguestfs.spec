@@ -1,6 +1,11 @@
 # TODO:
 # - finish haskell bindings (when finished upstream, not ready as of 1.20.2)
 # - PLD appliance support? (needs at least package list adjustment)
+# - unpackaged files
+#        /usr/share/man/ja/man1/libguestfs-make-fixed-appliance.1.gz
+#        /usr/share/man/ja/man3/guestfs-ruby.3.gz
+#        /usr/share/man/uk/man1/libguestfs-make-fixed-appliance.1.gz
+#        /usr/share/man/uk/man3/guestfs-ruby.3.gz
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
@@ -18,13 +23,14 @@
 %bcond_without	ruby		# Ruby binding
 %bcond_without	systemtap	# systemtap/dtrace probes
 
+%define		php_name	php55
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.26.0
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.26-stable/%{name}-%{version}.tar.gz
@@ -42,18 +48,13 @@ BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
 BuildRequires:	db-utils
-# erl_interface package
-%{?with_erlang:BuildRequires:	erlang}
 BuildRequires:	flex
 BuildRequires:	gettext-devel
-%{?with_haskell:BuildRequires:	ghc}
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
-%{?with_golang:BuildRequires:	golang}
 BuildRequires:	gperf
 BuildRequires:	gtk-doc >= 1.14
 BuildRequires:	hivex-devel >= 1.2.7
-%{?with_java:BuildRequires:	jdk}
 BuildRequires:	libcap-devel
 BuildRequires:	libconfig-devel
 BuildRequires:	libfuse-devel
@@ -63,13 +64,40 @@ BuildRequires:	libtool
 BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
-%{?with_java:BuildRequires:	rpm-javaprov}
+BuildRequires:	ncurses-devel
+BuildRequires:	pcre-devel
+BuildRequires:	perl-base
+BuildRequires:	perl-tools-pod
+BuildRequires:	pkgconfig
+BuildRequires:	po4a
+BuildRequires:	qemu-img >= 1.0
+BuildRequires:	readline-devel
+BuildRequires:	rpmbuild(macros) >= 1.656
+# libsystemd-journal
+BuildRequires:	systemd-devel
+BuildRequires:	yajl-devel >= 2
+%if %{with appliance}
+BuildRequires:	supermin >= 5.1.0
+%endif
+%if %{with erlang}
+# erl_interface package
+BuildRequires:	erlang
+%endif
+%if %{with golang}
+BuildRequires:	golang
+%endif
+%if %{with haskell}
+BuildRequires:	ghc
+%endif
+%if %{with java}
+BuildRequires:	jdk
+BuildRequires:	rpm-javaprov
+%endif
 %if %{with lua}
 # use 5.2 as 5.1 packaging in PLD was incompatible with what's expected by configure
 BuildRequires:	lua52
 BuildRequires:	lua52-devel
 %endif
-BuildRequires:	ncurses-devel
 %if %{with ocaml}
 BuildRequires:	ocaml
 BuildRequires:	ocaml-camlp4
@@ -78,9 +106,6 @@ BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
 %endif
-BuildRequires:	pcre-devel
-BuildRequires:	perl-base
-BuildRequires:	perl-tools-pod
 %if %{with perl}
 BuildRequires:	perl-ExtUtils-MakeMaker
 BuildRequires:	perl-Test-Simple
@@ -99,18 +124,15 @@ BuildRequires:	perl-hivex >= 1.2.7
 BuildRequires:	perl-libintl
 BuildRequires:	perl-modules
 %endif
-%{?with_php:BuildRequires:	/usr/bin/php}
-%{?with_php:BuildRequires:	php-devel}
-BuildRequires:	pkgconfig
-BuildRequires:	po4a
+%if %{with php}
+BuildRequires:	%{php_name}-devel
+BuildRequires:	%{php_name}-program
+%endif
 %if %{with python}
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 %endif
-BuildRequires:	qemu-img >= 1.0
-BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.656
 %if %{with ruby}
 BuildRequires:	rpm-rubyprov
 BuildRequires:	ruby
@@ -120,13 +142,9 @@ BuildRequires:	ruby-rake
 BuildRequires:	ruby-rdoc
 BuildRequires:	ruby-rubygems
 %endif
-%if %{with appliance}
-BuildRequires:	supermin >= 5.1.0
+%if %{with systemtap}
+BuildRequires:	systemtap-sdt-devel
 %endif
-# libsystemd-journal
-BuildRequires:	systemd-devel
-%{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
-BuildRequires:	yajl-devel >= 2
 Requires:	qemu-common >= 1.1.0
 Suggests:	db-utils
 Suggests:	icoutils
@@ -343,17 +361,17 @@ Perl bindings for libguestfs.
 %description -n perl-libguestfs -l pl.UTF-8
 Wiązania Perla do libguestfs.
 
-%package -n php-guestfs
+%package -n %{php_name}-guestfs
 Summary:	PHP bindings for libguestfs
 Summary(pl.UTF-8):	Wiązania PHP do libguestfs
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{version}-%{release}
 %{?requires_php_extension}
 
-%description -n php-guestfs
+%description -n %{php_name}-guestfs
 PHP bindings for libguestfs.
 
-%description -n php-guestfs -l pl.UTF-8
+%description -n %{php_name}-guestfs -l pl.UTF-8
 Wiązania PHP do libguestfs.
 
 %package -n python-libguestfs
@@ -443,7 +461,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	INSTALLDIRS=vendor \
 	DESTDIR=$RPM_BUILD_ROOT \
-	phpdir=%{_sysconfdir}/php/conf.d
+	phpdir=%{php_sysconfdir}/conf.d
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 %if %{with lua}
@@ -766,10 +784,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with php}
-%files -n php-guestfs
+%files -n %{php_name}-guestfs
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/php/conf.d/guestfs_php.ini
-%attr(755,root,root) %{_libdir}/php/guestfs_php.so
+%config(noreplace) %verify(not md5 mtime size) %{php_sysconfdir}/conf.d/guestfs_php.ini
+%attr(755,root,root) %{php_extensiondir}/guestfs_php.so
 %endif
 
 %if %{with python}
