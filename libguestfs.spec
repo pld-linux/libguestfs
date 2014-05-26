@@ -1,5 +1,5 @@
 # TODO:
-# - finish haskell bindings (when finished upstream, not ready as of 1.20.2)
+# - finish haskell bindings (when finished upstream, not ready as of 1.26.3)
 # - PLD appliance support? (needs at least package list adjustment)
 # - unpackaged files
 #        /usr/share/man/ja/man1/libguestfs-make-fixed-appliance.1.gz
@@ -23,18 +23,20 @@
 %bcond_without	ruby		# Ruby binding
 %bcond_without	systemtap	# systemtap/dtrace probes
 
+%if 0%{!?php_name:1}
 %define		php_name	php55
+%endif
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.26.0
-Release:	3
+Version:	1.26.3
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.26-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	fc00de0acc81441aeddcb1b8cc82b68a
+# Source0-md5:	02e517f21053325c434adc767d8d70cb
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
