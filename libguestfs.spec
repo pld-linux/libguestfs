@@ -777,7 +777,6 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/Sys/Guestfs.pm
 %{perl_vendorarch}/Sys/bindtests.pl
 %dir %{perl_vendorarch}/auto/Sys/Guestfs
-%{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.bs
 %attr(755,root,root) %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.so
 %{_mandir}/man3/guestfs-perl.3*
 %{_mandir}/man3/Sys::Guestfs.3pm*
