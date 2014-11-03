@@ -1,17 +1,14 @@
 # TODO:
+# - ocaml 4 for ocaml-based tools (List.mapi needed)
 # - finish haskell bindings (when finished upstream, not ready as of 1.26.3)
 # - PLD appliance support? (needs at least package list adjustment)
-# - unpackaged files
-#        /usr/share/man/ja/man1/libguestfs-make-fixed-appliance.1.gz
-#        /usr/share/man/ja/man3/guestfs-ruby.3.gz
-#        /usr/share/man/uk/man1/libguestfs-make-fixed-appliance.1.gz
-#        /usr/share/man/uk/man3/guestfs-ruby.3.gz
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
 %bcond_with	appliance	# appliance build (no PLD support)
 %bcond_without	erlang		# Erlang binding
 %bcond_without	golang		# Go language binding
+%bcond_without	gtk		# GTK+ based virt-p2v
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
 %bcond_without	java		# Java binding
 %bcond_without	lua		# Lua binding
@@ -31,12 +28,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.26.7
+Version:	1.28.2
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.26-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	26e98f30bf3352b7cc86c6853fb2666c
+Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	2bd5517aab435e83a06dae2a04618c73
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -55,6 +52,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
+%{?with_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	gtk-doc >= 1.14
 BuildRequires:	hivex-devel >= 1.2.7
 BuildRequires:	libcap-devel
@@ -76,7 +74,7 @@ BuildRequires:	qemu-img >= 1.0
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.656
 # libsystemd-journal
-BuildRequires:	systemd-devel
+BuildRequires:	systemd-devel >= 1:196
 BuildRequires:	yajl-devel >= 2
 %if %{with appliance}
 BuildRequires:	supermin >= 5.1.0
@@ -101,12 +99,14 @@ BuildRequires:	lua52
 BuildRequires:	lua52-devel
 %endif
 %if %{with ocaml}
-BuildRequires:	ocaml
+BuildRequires:	ocaml >= 1:4.0
 BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
+# for virt-builder
+BuildRequires:	xz-devel
 %endif
 %if %{with perl}
 BuildRequires:	perl-ExtUtils-MakeMaker
@@ -250,6 +250,11 @@ Requires:	%{name} = %{version}-%{release}
 %{?with_ocaml:Requires:	ocaml-libguestfs = %{version}-%{release}}
 %{?with_perltools:Requires:	perl-libguestfs = %{version}-%{release}}
 Requires:	augeas-libs >= 1.0.0
+%if %{with ocaml}
+Suggests:	unzip
+Suggests:	xz
+Suggests:	zip
+%endif
 
 %description tools
 libguestfs tools for accessing and modifying virtual machine (VM) disk
@@ -421,20 +426,27 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch3 -p1
 
 %build
+# preserve dir across libtoolize
+%{__mv} build-aux/snippet{,.back}
 %{__libtoolize}
+%{__mv} build-aux/snippet{.back,}
 %{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
 %configure \
 	vmchannel_test=no \
+	DB_DUMP=/usr/bin/db_dump \
+	DB_LOAD=/usr/bin/db_load \
 	%{?with_lua:LUA=/usr/bin/lua5.2} \
 	PBMTEXT=/usr/bin/pbmtext \
 	PNMTOPNG=/usr/bin/pnmtopng \
 	BMPTOPNM=/usr/bin/bmptopnm \
 	PAMCUT=/usr/bin/pamcut \
+	UNZIP=/usr/bin/unzip \
 	WRESTOOL=/usr/bin/wrestool \
 	QEMU=%{_bindir}/qemu \
+	ZIP=/usr/bin/zip \
 	--with-completionsdir=%{_datadir}/bash-completion/completions \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
@@ -478,6 +490,17 @@ rm -rf $RPM_BUILD_ROOT
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
+
+%if %{without appliance}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/libguestfs-make-fixed-appliance.1
+%endif
+%if %{without ocaml}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/virt-{builder,index-validate,resize,sparsify,sysprep}.1 \
+	$RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ocaml.3
+%endif
+%if %{without ruby}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ruby.3
+%endif
 
 %find_lang %{name}
 
@@ -552,29 +575,22 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/guestunmount
 %attr(755,root,root) %{_bindir}/libguestfs-test-tool
 %attr(755,root,root) %{_bindir}/virt-alignment-scan
-%attr(755,root,root) %{_bindir}/virt-builder
 %attr(755,root,root) %{_bindir}/virt-cat
 %attr(755,root,root) %{_bindir}/virt-copy-in
 %attr(755,root,root) %{_bindir}/virt-copy-out
-%attr(755,root,root) %{_bindir}/virt-customize
 %attr(755,root,root) %{_bindir}/virt-df
 %attr(755,root,root) %{_bindir}/virt-diff
 %attr(755,root,root) %{_bindir}/virt-edit
 %attr(755,root,root) %{_bindir}/virt-filesystems
 %attr(755,root,root) %{_bindir}/virt-format
-%attr(755,root,root) %{_bindir}/virt-index-validate
 %attr(755,root,root) %{_bindir}/virt-inspector
+%attr(755,root,root) %{_bindir}/virt-log
 %attr(755,root,root) %{_bindir}/virt-ls
 %attr(755,root,root) %{_bindir}/virt-rescue
 %attr(755,root,root) %{_bindir}/virt-tar-in
 %attr(755,root,root) %{_bindir}/virt-tar-out
 %attr(755,root,root) %{_sbindir}/guestfsd
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/virt-builder
-%dir /etc/xdg/virt-builder
-%dir /etc/xdg/virt-builder/repos.d
-%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.conf
-%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.gpg
 %{_mandir}/man1/guestfish.1*
 %{_mandir}/man1/guestfs-faq.1*
 %{_mandir}/man1/guestfs-performance.1*
@@ -584,18 +600,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/guestunmount.1*
 %{_mandir}/man1/libguestfs-test-tool.1*
 %{_mandir}/man1/virt-alignment-scan.1*
-%{_mandir}/man1/virt-builder.1*
 %{_mandir}/man1/virt-cat.1*
 %{_mandir}/man1/virt-copy-in.1*
 %{_mandir}/man1/virt-copy-out.1*
-%{_mandir}/man1/virt-customize.1*
 %{_mandir}/man1/virt-df.1*
 %{_mandir}/man1/virt-diff.1*
 %{_mandir}/man1/virt-edit.1*
 %{_mandir}/man1/virt-filesystems.1*
 %{_mandir}/man1/virt-format.1*
-%{_mandir}/man1/virt-index-validate.1*
 %{_mandir}/man1/virt-inspector.1*
+%{_mandir}/man1/virt-log.1*
 %{_mandir}/man1/virt-ls.1*
 %{_mandir}/man1/virt-rescue.1*
 %{_mandir}/man1/virt-tar-in.1*
@@ -611,7 +625,6 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/guestunmount.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
-%lang(ja) %{_mandir}/ja/man1/virt-builder.1*
 %lang(ja) %{_mandir}/ja/man1/virt-cat.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-out.1*
@@ -619,8 +632,8 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-edit.1*
 %lang(ja) %{_mandir}/ja/man1/virt-filesystems.1*
 %lang(ja) %{_mandir}/ja/man1/virt-format.1*
-%lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
 %lang(ja) %{_mandir}/ja/man1/virt-inspector.1*
+%lang(ja) %{_mandir}/ja/man1/virt-log.1*
 %lang(ja) %{_mandir}/ja/man1/virt-ls.1*
 %lang(ja) %{_mandir}/ja/man1/virt-rescue.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-in.1*
@@ -635,7 +648,6 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/guestunmount.1*
 %lang(uk) %{_mandir}/uk/man1/libguestfs-test-tool.1*
 %lang(uk) %{_mandir}/uk/man1/virt-alignment-scan.1*
-%lang(uk) %{_mandir}/uk/man1/virt-builder.1*
 %lang(uk) %{_mandir}/uk/man1/virt-cat.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-out.1*
@@ -643,23 +655,39 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-edit.1*
 %lang(uk) %{_mandir}/uk/man1/virt-filesystems.1*
 %lang(uk) %{_mandir}/uk/man1/virt-format.1*
-%lang(uk) %{_mandir}/uk/man1/virt-index-validate.1*
 %lang(uk) %{_mandir}/uk/man1/virt-inspector.1*
+%lang(uk) %{_mandir}/uk/man1/virt-log.1*
 %lang(uk) %{_mandir}/uk/man1/virt-ls.1*
 %lang(uk) %{_mandir}/uk/man1/virt-rescue.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-out.1*
 %lang(uk) %{_mandir}/uk/man5/libguestfs-tools.conf.5*
 %if %{with ocaml}
+%attr(755,root,root) %{_bindir}/virt-builder
+%attr(755,root,root) %{_bindir}/virt-customize
+%attr(755,root,root) %{_bindir}/virt-index-validate
 %attr(755,root,root) %{_bindir}/virt-resize
 %attr(755,root,root) %{_bindir}/virt-sparsify
 %attr(755,root,root) %{_bindir}/virt-sysprep
+# compat dir symlink
+%{_sysconfdir}/virt-builder
+%dir /etc/xdg/virt-builder
+%dir /etc/xdg/virt-builder/repos.d
+%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.gpg
+%{_mandir}/man1/virt-builder.1*
+%{_mandir}/man1/virt-customize.1*
+%{_mandir}/man1/virt-index-validate.1*
 %{_mandir}/man1/virt-resize.1*
 %{_mandir}/man1/virt-sparsify.1*
 %{_mandir}/man1/virt-sysprep.1*
+%lang(ja) %{_mandir}/ja/man1/virt-builder.1*
+%lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
 %lang(ja) %{_mandir}/ja/man1/virt-resize.1*
 %lang(ja) %{_mandir}/ja/man1/virt-sparsify.1*
 %lang(ja) %{_mandir}/ja/man1/virt-sysprep.1*
+%lang(uk) %{_mandir}/uk/man1/virt-builder.1*
+%lang(uk) %{_mandir}/uk/man1/virt-index-validate.1*
 %lang(uk) %{_mandir}/uk/man1/virt-resize.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sparsify.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sysprep.1*
@@ -685,6 +713,16 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-make-fs.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar.1*
 %lang(uk) %{_mandir}/uk/man1/virt-win-reg.1*
+%endif
+
+%if %{with gtk}
+%attr(755,root,root) %{_bindir}/virt-p2v-make-disk
+%attr(755,root,root) %{_bindir}/virt-p2v-make-kickstart
+%attr(755,root,root) %{_libexecdir}/virt-p2v
+%{_datadir}/virt-p2v
+%{_mandir}/man1/virt-p2v.1*
+%{_mandir}/man1/virt-p2v-make-disk.1*
+%{_mandir}/man1/virt-p2v-make-kickstart.1*
 %endif
 
 %if %{with appliance}
