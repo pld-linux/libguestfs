@@ -1,5 +1,4 @@
 # TODO:
-# - ocaml 4 for ocaml-based tools (List.mapi needed)
 # - finish haskell bindings (when finished upstream, not ready as of 1.26.3)
 # - PLD appliance support? (needs at least package list adjustment)
 #
