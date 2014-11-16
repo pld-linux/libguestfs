@@ -28,12 +28,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.28.2
+Version:	1.28.3
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	2bd5517aab435e83a06dae2a04618c73
+# Source0-md5:	b816b1ff11fe543b024dcec7eddcf228
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -669,6 +669,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-resize
 %attr(755,root,root) %{_bindir}/virt-sparsify
 %attr(755,root,root) %{_bindir}/virt-sysprep
+%attr(755,root,root) %{_bindir}/virt-v2v
 # compat dir symlink
 %{_sysconfdir}/virt-builder
 %dir /etc/xdg/virt-builder
@@ -681,6 +682,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-resize.1*
 %{_mandir}/man1/virt-sparsify.1*
 %{_mandir}/man1/virt-sysprep.1*
+%{_mandir}/man1/virt-v2v.1*
 %lang(ja) %{_mandir}/ja/man1/virt-builder.1*
 %lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
 %lang(ja) %{_mandir}/ja/man1/virt-resize.1*
