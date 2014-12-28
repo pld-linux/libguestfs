@@ -47,7 +47,7 @@ BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
 BuildRequires:	db-utils
 BuildRequires:	flex
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
@@ -102,7 +102,7 @@ BuildRequires:	ocaml >= 1:4.0
 BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
-BuildRequires:	ocaml-gettext-devel
+BuildRequires:	ocaml-gettext-tools
 BuildRequires:	ocaml-pcre-devel
 # for virt-builder
 BuildRequires:	xz-devel
