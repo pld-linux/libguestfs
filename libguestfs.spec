@@ -466,7 +466,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	--disable-silent-rules \
 	%{__enable_disable static_libs static}
 
-%{__make} \
+%{__make} -j1 \
 	INSTALLDIRS=vendor
 
 %install
