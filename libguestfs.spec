@@ -27,12 +27,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.28.3
+Version:	1.28.6
 Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	b816b1ff11fe543b024dcec7eddcf228
+# Source0-md5:	f9a9dc43460475fe714e22df821c2739
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -74,7 +74,7 @@ BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.656
 # libsystemd-journal
 BuildRequires:	systemd-devel >= 1:196
-BuildRequires:	yajl-devel >= 2
+BuildRequires:	yajl-devel >= 2.0.4
 %if %{with appliance}
 BuildRequires:	supermin >= 5.1.0
 %endif
@@ -102,7 +102,7 @@ BuildRequires:	ocaml >= 1:4.0
 BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
-BuildRequires:	ocaml-gettext-tools
+BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
 # for virt-builder
 BuildRequires:	xz-devel
@@ -147,6 +147,7 @@ BuildRequires:	ruby-rubygems
 BuildRequires:	systemtap-sdt-devel
 %endif
 Requires:	qemu-common >= 1.1.0
+Requires:	yajl >= 2.0.4
 Suggests:	db-utils
 Suggests:	icoutils
 Suggests:	netpbm-progs
