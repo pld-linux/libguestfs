@@ -12,6 +12,7 @@
 %bcond_without	java		# Java binding
 %bcond_without	lua		# Lua binding
 %bcond_without	ocaml		# OCaml binding and tools
+%bcond_without	ocaml_opt	# skip building native optimized binaries (bytecode is always built)
 %bcond_without	perl		# Perl binding
 %bcond_without	perltools	# Perl tools
 %bcond_without	php		# PHP binding
@@ -22,13 +23,20 @@
 %if 0%{!?php_name:1}
 %define		php_name	php55
 %endif
+
+%ifarch x32
+%undefine	with_erlang
+%undefine	with_golang
+%undefine	with_ocaml_opt
+%endif
+
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.28.6
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
@@ -800,12 +808,14 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/ocaml/guestfs
 %{_libdir}/ocaml/guestfs/META
 %{_libdir}/ocaml/guestfs/guestfs.cmi
-%{_libdir}/ocaml/guestfs/guestfs.cmx
 %{_libdir}/ocaml/guestfs/guestfs.mli
 %{_libdir}/ocaml/guestfs/libmlguestfs.a
-%{_libdir}/ocaml/guestfs/mlguestfs.a
 %{_libdir}/ocaml/guestfs/mlguestfs.cma
+%if %{with ocaml_opt}
+%{_libdir}/ocaml/guestfs/guestfs.cmx
+%{_libdir}/ocaml/guestfs/mlguestfs.a
 %{_libdir}/ocaml/guestfs/mlguestfs.cmxa
+%endif
 %{_mandir}/man3/guestfs-ocaml.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-ocaml.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-ocaml.3*
