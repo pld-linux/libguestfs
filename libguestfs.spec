@@ -35,12 +35,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.28.6
-Release:	2
+Version:	1.28.10
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	f9a9dc43460475fe714e22df821c2739
+# Source0-md5:	5b9fc1f8e41d7c7a9505c160a79f6504
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -53,6 +53,7 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
+BuildRequires:	cpio
 BuildRequires:	db-utils
 BuildRequires:	flex
 BuildRequires:	gettext-tools
@@ -138,8 +139,8 @@ BuildRequires:	%{php_name}-devel
 BuildRequires:	%{php_name}-program
 %endif
 %if %{with python}
-BuildRequires:	python
-BuildRequires:	python-devel
+BuildRequires:	python >= 1:2.7
+BuildRequires:	python-devel >= 1:2.7
 BuildRequires:	rpm-pythonprov
 %endif
 %if %{with ruby}
@@ -633,6 +634,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/guestunmount.1*
 %lang(ja) %{_mandir}/ja/man1/libguestfs-test-tool.1*
 %lang(ja) %{_mandir}/ja/man1/virt-alignment-scan.1*
+%lang(ja) %{_mandir}/ja/man1/virt-diff.1*
 %lang(ja) %{_mandir}/ja/man1/virt-cat.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-out.1*
@@ -660,6 +662,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-copy-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-out.1*
 %lang(uk) %{_mandir}/uk/man1/virt-df.1*
+%lang(uk) %{_mandir}/uk/man1/virt-diff.1*
 %lang(uk) %{_mandir}/uk/man1/virt-edit.1*
 %lang(uk) %{_mandir}/uk/man1/virt-filesystems.1*
 %lang(uk) %{_mandir}/uk/man1/virt-format.1*
@@ -692,15 +695,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-sysprep.1*
 %{_mandir}/man1/virt-v2v.1*
 %lang(ja) %{_mandir}/ja/man1/virt-builder.1*
+%lang(ja) %{_mandir}/ja/man1/virt-customize.1*
 %lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
 %lang(ja) %{_mandir}/ja/man1/virt-resize.1*
 %lang(ja) %{_mandir}/ja/man1/virt-sparsify.1*
 %lang(ja) %{_mandir}/ja/man1/virt-sysprep.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v.1*
 %lang(uk) %{_mandir}/uk/man1/virt-builder.1*
+%lang(uk) %{_mandir}/uk/man1/virt-customize.1*
 %lang(uk) %{_mandir}/uk/man1/virt-index-validate.1*
 %lang(uk) %{_mandir}/uk/man1/virt-resize.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sparsify.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sysprep.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v.1*
 %endif
 %if %{with perltools}
 %attr(755,root,root) %{_bindir}/virt-list-filesystems
@@ -733,6 +740,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-p2v.1*
 %{_mandir}/man1/virt-p2v-make-disk.1*
 %{_mandir}/man1/virt-p2v-make-kickstart.1*
+%lang(ja) %{_mandir}/ja/man1/virt-p2v.1*
+%lang(ja) %{_mandir}/ja/man1/virt-p2v-make-disk.1*
+%lang(ja) %{_mandir}/ja/man1/virt-p2v-make-kickstart.1*
+%lang(uk) %{_mandir}/uk/man1/virt-p2v.1*
+%lang(uk) %{_mandir}/uk/man1/virt-p2v-make-disk.1*
+%lang(uk) %{_mandir}/uk/man1/virt-p2v-make-kickstart.1*
 %endif
 
 %if %{with appliance}
