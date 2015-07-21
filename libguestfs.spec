@@ -36,7 +36,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.28.10
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
@@ -45,6 +45,7 @@ Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-completionsdir.patch
+Patch4:		golang14nosrcpkg.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -433,6 +434,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 # preserve dir across libtoolize
@@ -779,7 +781,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/golang/pkg/linux_*/libguestfs.org
 %dir %{_libdir}/golang/pkg/linux_*/libguestfs.org/guestfs
 %{_libdir}/golang/pkg/linux_*/libguestfs.org/guestfs/guestfs.a
-%{_libdir}/golang/src/pkg/libguestfs.org
+%{_libdir}/golang/src/libguestfs.org
 %{_mandir}/man3/guestfs-golang.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-golang.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-golang.3*
