@@ -110,7 +110,7 @@ BuildRequires:	lua52-devel
 %if %{with ocaml}
 BuildRequires:	ocaml >= 1:4.0
 BuildRequires:	ocaml-camlp4
-BuildRequires:	ocaml-fileutils >= 0.4.5-4
+BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
 BuildRequires:	ocaml-pcre-devel
