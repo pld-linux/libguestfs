@@ -1,5 +1,5 @@
 # TODO:
-# - finish haskell bindings (when finished upstream, not ready as of 1.26.3)
+# - finish haskell bindings (when finished upstream, not ready as of 1.30.4)
 # - PLD appliance support? (needs at least package list adjustment)
 #
 # Conditional build:
@@ -35,12 +35,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.28.10
-Release:	2
+Version:	1.30.4
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.28-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	5b9fc1f8e41d7c7a9505c160a79f6504
+Source0:	http://libguestfs.org/download/1.30-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	1703d870544fbd4f43259f5339834e44
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -113,6 +113,7 @@ BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
+BuildRequires:	ocaml-libvirt-devel >= 0.6.1.4-4
 BuildRequires:	ocaml-pcre-devel
 # for virt-builder
 BuildRequires:	xz-devel
@@ -261,6 +262,7 @@ Requires:	%{name} = %{version}-%{release}
 %{?with_perltools:Requires:	perl-libguestfs = %{version}-%{release}}
 Requires:	augeas-libs >= 1.0.0
 %if %{with ocaml}
+Requires:	ocaml-libvirt >= 0.6.1.4-4
 Suggests:	unzip
 Suggests:	xz
 Suggests:	zip
@@ -505,8 +507,10 @@ rm -rf $RPM_BUILD_ROOT
 %if %{without appliance}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/libguestfs-make-fixed-appliance.1
 %endif
-%if %{without ocaml}
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/virt-{builder,index-validate,resize,sparsify,sysprep}.1 \
+%if %{with ocaml}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dll*.so.owner
+%else
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/virt-{builder,index-validate,resize,sparsify,sysprep,v2v-test-harness}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ocaml.3
 %endif
 %if %{without ruby}
@@ -590,10 +594,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-copy-in
 %attr(755,root,root) %{_bindir}/virt-copy-out
 %attr(755,root,root) %{_bindir}/virt-df
+%attr(755,root,root) %{_bindir}/virt-dib
 %attr(755,root,root) %{_bindir}/virt-diff
 %attr(755,root,root) %{_bindir}/virt-edit
 %attr(755,root,root) %{_bindir}/virt-filesystems
 %attr(755,root,root) %{_bindir}/virt-format
+%attr(755,root,root) %{_bindir}/virt-get-kernel
 %attr(755,root,root) %{_bindir}/virt-inspector
 %attr(755,root,root) %{_bindir}/virt-log
 %attr(755,root,root) %{_bindir}/virt-ls
@@ -615,10 +621,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-copy-in.1*
 %{_mandir}/man1/virt-copy-out.1*
 %{_mandir}/man1/virt-df.1*
+%{_mandir}/man1/virt-dib.1*
 %{_mandir}/man1/virt-diff.1*
 %{_mandir}/man1/virt-edit.1*
 %{_mandir}/man1/virt-filesystems.1*
 %{_mandir}/man1/virt-format.1*
+%{_mandir}/man1/virt-get-kernel.1*
 %{_mandir}/man1/virt-inspector.1*
 %{_mandir}/man1/virt-log.1*
 %{_mandir}/man1/virt-ls.1*
@@ -816,22 +824,33 @@ rm -rf $RPM_BUILD_ROOT
 %files -n ocaml-libguestfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/ocaml/stublibs/dllmlguestfs.so
-%{_libdir}/ocaml/stublibs/dllmlguestfs.so.owner
+%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllv2v_test_harness.so
+%dir %{_libdir}/ocaml/guestfs
+%{_libdir}/ocaml/guestfs/META
+%{_libdir}/ocaml/guestfs/mlguestfs.cma
 
 %files -n ocaml-libguestfs-devel
 %defattr(644,root,root,755)
-%dir %{_libdir}/ocaml/guestfs
-%{_libdir}/ocaml/guestfs/META
 %{_libdir}/ocaml/guestfs/guestfs.cmi
 %{_libdir}/ocaml/guestfs/guestfs.mli
 %{_libdir}/ocaml/guestfs/libmlguestfs.a
-%{_libdir}/ocaml/guestfs/mlguestfs.cma
+%dir %{_libdir}/ocaml/v2v_test_harness
+%{_libdir}/ocaml/v2v_test_harness/META
+%{_libdir}/ocaml/v2v_test_harness/libv2v_test_harness.a
+%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmi
+%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.mli
 %if %{with ocaml_opt}
 %{_libdir}/ocaml/guestfs/guestfs.cmx
 %{_libdir}/ocaml/guestfs/mlguestfs.a
 %{_libdir}/ocaml/guestfs/mlguestfs.cmxa
+%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.a
+%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmx
+%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmxa
 %endif
+%{_mandir}/man1/virt-v2v-test-harness.1*
 %{_mandir}/man3/guestfs-ocaml.3*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-test-harness.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-test-harness.1*
 %lang(ja) %{_mandir}/ja/man3/guestfs-ocaml.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-ocaml.3*
 %endif
