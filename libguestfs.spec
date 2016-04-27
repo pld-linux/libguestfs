@@ -36,7 +36,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.30.4
-Release:	6
+Release:	7
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.30-stable/%{name}-%{version}.tar.gz
@@ -54,7 +54,6 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
-BuildRequires:	cpio
 BuildRequires:	db-utils
 BuildRequires:	flex
 BuildRequires:	gettext-tools
@@ -207,6 +206,9 @@ Statyczna biblioteka libguestfs.
 Summary:	libguestfs API documentation
 Summary(pl.UTF-8):	Dokumentacja API libguestfs
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 libguestfs API documentation.
@@ -258,9 +260,9 @@ Summary:	libguestfs tools for accessing and modifying virtual machine disk image
 Summary(pl.UTF-8):	Narzędzia libguestfs do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
+Requires:	augeas-libs >= 1.0.0
 %{?with_ocaml:Requires:	ocaml-libguestfs = %{version}-%{release}}
 %{?with_perltools:Requires:	perl-libguestfs = %{version}-%{release}}
-Requires:	augeas-libs >= 1.0.0
 %if %{with ocaml}
 Requires:	ocaml-libvirt >= 0.6.1.4-4
 Suggests:	unzip
@@ -898,6 +900,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n bash-completion-libguestfs
 %defattr(644,root,root,755)
-%{_datadir}/bash-completion/completions/guestfish
-%{_datadir}/bash-completion/completions/guestmount
-%{_datadir}/bash-completion/completions/virt-*
+%{bash_compdir}/guestfish
+%{bash_compdir}/guestmount
+%{bash_compdir}/virt-*
