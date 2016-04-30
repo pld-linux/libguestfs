@@ -6,7 +6,7 @@
 %bcond_with	static_libs	# build static libraries
 %bcond_with	appliance	# appliance build (no PLD support)
 %bcond_without	erlang		# Erlang binding
-%bcond_without	golang		# Go language binding
+%bcond_with	golang		# Go language binding
 %bcond_without	gtk		# GTK+ based virt-p2v
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
 %bcond_without	java		# Java binding
@@ -35,12 +35,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.30.4
-Release:	7
+Version:	1.32.4
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.30-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	1703d870544fbd4f43259f5339834e44
+Source0:	http://libguestfs.org/download/1.32-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	f0ac7aa2382b557cc012c239b5e69bb3
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
@@ -540,19 +540,28 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libguestfs.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libguestfs.so.0
 %{_mandir}/man1/guestfs-release-notes.1*
+%{_mandir}/man1/guestfs-security.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-release-notes.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-security.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-release-notes.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-security.1*
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libguestfs.so
 %{_includedir}/guestfs.h
 %{_pkgconfigdir}/libguestfs.pc
+%{_mandir}/man1/guestfs-hacking.1*
+%{_mandir}/man1/guestfs-internals.1*
 %{_mandir}/man3/guestfs.3*
 %{_mandir}/man3/guestfs-examples.3*
 %{_mandir}/man3/libguestfs.3*
+%lang(ja) %{_mandir}/ja/man1/guestfs-hacking.1*
+%lang(ja) %{_mandir}/ja/man1/guestfs-internals.1*
 %lang(ja) %{_mandir}/ja/man3/guestfs.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-examples.3*
+%lang(uk) %{_mandir}/uk/man1/guestfs-hacking.1*
+%lang(uk) %{_mandir}/uk/man1/guestfs-internals.1*
 %lang(uk) %{_mandir}/uk/man3/guestfs.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-examples.3*
 
@@ -609,6 +618,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-rescue
 %attr(755,root,root) %{_bindir}/virt-tar-in
 %attr(755,root,root) %{_bindir}/virt-tar-out
+%attr(755,root,root) %{_bindir}/virt-v2v-copy-to-local
 %attr(755,root,root) %{_sbindir}/guestfsd
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libguestfs-tools.conf
 %{_mandir}/man1/guestfish.1*
@@ -636,6 +646,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-rescue.1*
 %{_mandir}/man1/virt-tar-in.1*
 %{_mandir}/man1/virt-tar-out.1*
+%{_mandir}/man1/virt-v2v-copy-to-local.1*
 %{_mandir}/man5/libguestfs-tools.conf.5*
 %{_mandir}/man8/guestfsd.8*
 %lang(ja) %{_mandir}/ja/man1/guestfish.1*
@@ -652,9 +663,11 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-copy-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-copy-out.1*
 %lang(ja) %{_mandir}/ja/man1/virt-df.1*
+%lang(ja) %{_mandir}/ja/man1/virt-dib.1*
 %lang(ja) %{_mandir}/ja/man1/virt-edit.1*
 %lang(ja) %{_mandir}/ja/man1/virt-filesystems.1*
 %lang(ja) %{_mandir}/ja/man1/virt-format.1*
+%lang(ja) %{_mandir}/ja/man1/virt-get-kernel.1*
 %lang(ja) %{_mandir}/ja/man1/virt-inspector.1*
 %lang(ja) %{_mandir}/ja/man1/virt-log.1*
 %lang(ja) %{_mandir}/ja/man1/virt-ls.1*
@@ -675,10 +688,12 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-copy-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-copy-out.1*
 %lang(uk) %{_mandir}/uk/man1/virt-df.1*
+%lang(ja) %{_mandir}/uk/man1/virt-dib.1*
 %lang(uk) %{_mandir}/uk/man1/virt-diff.1*
 %lang(uk) %{_mandir}/uk/man1/virt-edit.1*
 %lang(uk) %{_mandir}/uk/man1/virt-filesystems.1*
 %lang(uk) %{_mandir}/uk/man1/virt-format.1*
+%lang(ja) %{_mandir}/uk/man1/virt-get-kernel.1*
 %lang(uk) %{_mandir}/uk/man1/virt-inspector.1*
 %lang(uk) %{_mandir}/uk/man1/virt-log.1*
 %lang(uk) %{_mandir}/uk/man1/virt-ls.1*
@@ -862,7 +877,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -n perl-libguestfs
 %defattr(644,root,root,755)
 %{perl_vendorarch}/Sys/Guestfs.pm
-%{perl_vendorarch}/Sys/bindtests.pl
 %dir %{perl_vendorarch}/auto/Sys/Guestfs
 %attr(755,root,root) %{perl_vendorarch}/auto/Sys/Guestfs/Guestfs.so
 %{_mandir}/man3/guestfs-perl.3*

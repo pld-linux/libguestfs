@@ -1,7 +1,7 @@
---- libguestfs-1.22.3/configure.ac.orig	2013-06-14 17:10:32.000000000 +0200
-+++ libguestfs-1.22.3/configure.ac	2013-06-19 18:14:18.122926776 +0200
-@@ -1526,6 +1526,11 @@
- ])
+--- libguestfs-1.22.3/m4/guestfs_bash_completion.m4.orig	2013-06-14 17:10:32.000000000 +0200
++++ libguestfs-1.22.3/m4/guestfs_bash_completion.m4	2013-06-19 18:14:18.122926776 +0200
+@@ -16,6 +16,11 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  
  dnl Bash completion.
 +AC_ARG_WITH([completionsdir], [AS_HELP_STRING([--with-completionsdir], [path to bash completion directory])], [
@@ -12,11 +12,9 @@
  PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0], [
      bash_completion=yes
      AC_MSG_CHECKING([for bash-completions directory])
-@@ -1536,6 +1541,7 @@
+@@ -1536,4 +1541,5 @@
      bash_completion=no
      AC_MSG_WARN([bash-completion not installed])
  ])
 +])
  AM_CONDITIONAL([HAVE_BASH_COMPLETION],[test "x$bash_completion" = "xyes"])
- 
- dnl Library versioning.
