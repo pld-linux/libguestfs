@@ -15,7 +15,7 @@
 %bcond_without	ocaml_opt	# skip building native optimized binaries (bytecode is always built)
 %bcond_without	perl		# Perl binding
 %bcond_without	perltools	# Perl tools
-%bcond_without	php		# PHP binding
+%bcond_with	php		# PHP binding
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
 %bcond_without	systemtap	# systemtap/dtrace probes
@@ -36,7 +36,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.32.4
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.32-stable/%{name}-%{version}.tar.gz
