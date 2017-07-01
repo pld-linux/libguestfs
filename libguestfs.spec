@@ -616,6 +616,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-log
 %attr(755,root,root) %{_bindir}/virt-ls
 %attr(755,root,root) %{_bindir}/virt-rescue
+%attr(755,root,root) %{_bindir}/virt-tail
 %attr(755,root,root) %{_bindir}/virt-tar-in
 %attr(755,root,root) %{_bindir}/virt-tar-out
 %attr(755,root,root) %{_bindir}/virt-v2v-copy-to-local
@@ -644,6 +645,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virt-log.1*
 %{_mandir}/man1/virt-ls.1*
 %{_mandir}/man1/virt-rescue.1*
+%{_mandir}/man1/virt-tail.1*
 %{_mandir}/man1/virt-tar-in.1*
 %{_mandir}/man1/virt-tar-out.1*
 %{_mandir}/man1/virt-v2v-copy-to-local.1*
@@ -763,11 +765,13 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with gtk}
 %attr(755,root,root) %{_bindir}/virt-p2v-make-disk
 %attr(755,root,root) %{_bindir}/virt-p2v-make-kickstart
+%attr(755,root,root) %{_bindir}/virt-p2v-make-kiwi
 %attr(755,root,root) %{_libexecdir}/virt-p2v
 %{_datadir}/virt-p2v
 %{_mandir}/man1/virt-p2v.1*
 %{_mandir}/man1/virt-p2v-make-disk.1*
 %{_mandir}/man1/virt-p2v-make-kickstart.1*
+%{_mandir}/man1/virt-p2v-make-kiwi.1*
 %lang(ja) %{_mandir}/ja/man1/virt-p2v.1*
 %lang(ja) %{_mandir}/ja/man1/virt-p2v-make-disk.1*
 %lang(ja) %{_mandir}/ja/man1/virt-p2v-make-kickstart.1*
@@ -916,4 +920,5 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{bash_compdir}/guestfish
 %{bash_compdir}/guestmount
+%{bash_compdir}/guestunmount
 %{bash_compdir}/virt-*
