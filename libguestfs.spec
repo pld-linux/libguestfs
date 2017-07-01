@@ -9,7 +9,7 @@
 %bcond_with	golang		# Go language binding
 %bcond_without	gtk		# GTK+ based virt-p2v
 %bcond_with	haskell		# Haskell (GHC) binding [incomplete, nothing is installed]
-%bcond_without	java		# Java binding
+%bcond_with	java		# Java binding (broken linking, missing symbols)
 %bcond_without	lua		# Lua binding
 %bcond_without	ocaml		# OCaml binding and tools
 %bcond_without	ocaml_opt	# skip building native optimized binaries (bytecode is always built)
