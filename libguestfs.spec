@@ -164,6 +164,13 @@ Suggests:	icoutils
 Suggests:	netpbm-progs
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%ifarch %{ix86}
+%define		qemu_bin	/usr/bin/qemu-system-i386
+%endif
+%ifarch %{x8664} x32
+%define		qemu_bin	/usr/bin/qemu-system-x86_64
+%endif
+
 %description
 libguestfs is a library and set of tools for accessing and modifying
 virtual machine (VM) disk images. You can use this for viewing and
@@ -462,13 +469,12 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	SUPERMIN=/usr/bin/supermin \
 	UNZIP=/usr/bin/unzip \
 	WRESTOOL=/usr/bin/wrestool \
-	QEMU=%{_bindir}/qemu \
+	QEMU=%{?qemu_bin}%{!?qemu_bin:/usr/bin/qemu} \
 	ZIP=/usr/bin/zip \
 	--with-completionsdir=%{_datadir}/bash-completion/completions \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-python-installdir=%{py_sitedir} \
-	--with-qemu=qemu \
 	--enable-install-daemon \
 	%{!?with_appliance:--disable-appliance} \
 	%{!?with_erlang:--disable-erlang} \
