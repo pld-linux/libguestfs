@@ -528,6 +528,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ruby.3
 %endif
 
+install -d $RPM_BUILD_ROOT%{_libdir}/guestfs
+
 %find_lang %{name}
 
 %clean
@@ -547,6 +549,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS BUGS ChangeLog README TODO
 %attr(755,root,root) %{_libdir}/libguestfs.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libguestfs.so.0
+%dir %{_libdir}/guestfs
 %{_mandir}/man1/guestfs-release-notes.1*
 %{_mandir}/man1/guestfs-security.1*
 %lang(ja) %{_mandir}/ja/man1/guestfs-release-notes.1*
