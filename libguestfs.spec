@@ -459,6 +459,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	PNMTOPNG=/usr/bin/pnmtopng \
 	BMPTOPNM=/usr/bin/bmptopnm \
 	PAMCUT=/usr/bin/pamcut \
+	SUPERMIN=/usr/bin/supermin \
 	UNZIP=/usr/bin/unzip \
 	WRESTOOL=/usr/bin/wrestool \
 	QEMU=%{_bindir}/qemu \
