@@ -119,6 +119,7 @@ BuildRequires:	xz-devel
 %endif
 %if %{with perl}
 BuildRequires:	perl-ExtUtils-MakeMaker
+BuildRequires:	perl-Module-Build
 BuildRequires:	perl-Test-Simple
 BuildRequires:	rpm-perlprov
 %endif
