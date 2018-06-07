@@ -36,7 +36,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.36.5
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.36-stable/%{name}-%{version}.tar.gz
@@ -777,7 +777,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-p2v-make-disk
 %attr(755,root,root) %{_bindir}/virt-p2v-make-kickstart
 %attr(755,root,root) %{_bindir}/virt-p2v-make-kiwi
-%attr(755,root,root) %{_libexecdir}/virt-p2v
+%attr(755,root,root) %{_libdir}/virt-p2v
 %{_datadir}/virt-p2v
 %{_mandir}/man1/virt-p2v.1*
 %{_mandir}/man1/virt-p2v-make-disk.1*
