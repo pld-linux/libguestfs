@@ -30,8 +30,6 @@
 %undefine	with_ocaml_opt
 %endif
 
-%include	/usr/lib/rpm/macros.perl
-%include	/usr/lib/rpm/macros.java
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
