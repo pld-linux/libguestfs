@@ -212,9 +212,7 @@ Statyczna biblioteka libguestfs.
 Summary:	libguestfs API documentation
 Summary(pl.UTF-8):	Dokumentacja API libguestfs
 Group:		Documentation
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description apidocs
 libguestfs API documentation.
