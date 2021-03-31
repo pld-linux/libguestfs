@@ -1,40 +1,6 @@
 # TODO:
 # - finish haskell bindings (when finished upstream, not ready as of 1.30.4)
 # - PLD appliance support? (needs at least package list adjustment)
-# 
-# /etc/xdg/virt-builder/repos.d/opensuse.conf
-# /etc/xdg/virt-builder/repos.d/opensuse.gpg
-# %{_bindir}/virt-builder-repository
-# %{bash_compdir}/libguestfs-test-tool
-# %{_mandir}/ja/man1/guestfs-building.1*
-# %{_mandir}/ja/man1/virt-v2v-copy-to-local.1*
-# %{_mandir}/ja/man1/virt-v2v-input-vmware.1*
-# %{_mandir}/ja/man1/virt-v2v-input-xen.1*
-# %{_mandir}/ja/man1/virt-v2v-output-local.1*
-# %{_mandir}/ja/man1/virt-v2v-output-openstack.1*
-# %{_mandir}/ja/man1/virt-v2v-output-rhv.1*
-# %{_mandir}/ja/man1/virt-v2v-support.1*
-# %{_mandir}/ja/man3/guestfs-golang.3*
-# %{_mandir}/ja/man3/guestfs-java.3*
-# %{_mandir}/man1/guestfs-building.1*
-# %{_mandir}/man1/virt-builder-repository.1*
-# %{_mandir}/man1/virt-v2v-input-vmware.1*
-# %{_mandir}/man1/virt-v2v-input-xen.1*
-# %{_mandir}/man1/virt-v2v-output-local.1*
-# %{_mandir}/man1/virt-v2v-output-openstack.1*
-# %{_mandir}/man1/virt-v2v-output-rhv.1*
-# %{_mandir}/man1/virt-v2v-support.1*
-# %{_mandir}/man3/guestfs-gobject.3*
-# %{_mandir}/uk/man1/guestfs-building.1*
-# %{_mandir}/uk/man1/virt-v2v-copy-to-local.1*
-# %{_mandir}/uk/man1/virt-v2v-input-vmware.1*
-# %{_mandir}/uk/man1/virt-v2v-input-xen.1*
-# %{_mandir}/uk/man1/virt-v2v-output-local.1*
-# %{_mandir}/uk/man1/virt-v2v-output-openstack.1*
-# %{_mandir}/uk/man1/virt-v2v-output-rhv.1*
-# %{_mandir}/uk/man1/virt-v2v-support.1*
-# %{_mandir}/uk/man3/guestfs-golang.3*
-# %{_mandir}/uk/man3/guestfs-java.3*
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
@@ -68,7 +34,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.40.2
-Release:	0.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://libguestfs.org/download/1.40-stable/%{name}-%{version}.tar.gz
@@ -620,6 +586,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/guestfs-gobject
 %{_datadir}/gir-1.0/Guestfs-1.0.gir
 %{_pkgconfigdir}/libguestfs-gobject-1.0.pc
+%{_mandir}/man3/guestfs-gobject.3*
 
 %if %{with static_libs}
 %files gobject-static
@@ -708,6 +675,7 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-rescue.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-in.1*
 %lang(ja) %{_mandir}/ja/man1/virt-tar-out.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-copy-to-local.1*
 %lang(ja) %{_mandir}/ja/man5/libguestfs-tools.conf.5*
 %lang(uk) %{_mandir}/uk/man1/guestfish.1*
 %lang(uk) %{_mandir}/uk/man1/guestfs-faq.1*
@@ -734,9 +702,11 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-rescue.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-in.1*
 %lang(uk) %{_mandir}/uk/man1/virt-tar-out.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-copy-to-local.1*
 %lang(uk) %{_mandir}/uk/man5/libguestfs-tools.conf.5*
 %if %{with ocaml}
 %attr(755,root,root) %{_bindir}/virt-builder
+%attr(755,root,root) %{_bindir}/virt-builder-repository
 %attr(755,root,root) %{_bindir}/virt-customize
 %attr(755,root,root) %{_bindir}/virt-index-validate
 %attr(755,root,root) %{_bindir}/virt-resize
@@ -750,12 +720,19 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/xdg/virt-builder/repos.d/libguestfs.gpg
 %{_mandir}/man1/virt-builder.1*
+%{_mandir}/man1/virt-builder-repository.1*
 %{_mandir}/man1/virt-customize.1*
 %{_mandir}/man1/virt-index-validate.1*
 %{_mandir}/man1/virt-resize.1*
 %{_mandir}/man1/virt-sparsify.1*
 %{_mandir}/man1/virt-sysprep.1*
 %{_mandir}/man1/virt-v2v.1*
+%{_mandir}/man1/virt-v2v-input-vmware.1*
+%{_mandir}/man1/virt-v2v-input-xen.1*
+%{_mandir}/man1/virt-v2v-output-local.1*
+%{_mandir}/man1/virt-v2v-output-openstack.1*
+%{_mandir}/man1/virt-v2v-output-rhv.1*
+%{_mandir}/man1/virt-v2v-support.1*
 %lang(ja) %{_mandir}/ja/man1/virt-builder.1*
 %lang(ja) %{_mandir}/ja/man1/virt-customize.1*
 %lang(ja) %{_mandir}/ja/man1/virt-index-validate.1*
@@ -763,6 +740,12 @@ rm -rf $RPM_BUILD_ROOT
 %lang(ja) %{_mandir}/ja/man1/virt-sparsify.1*
 %lang(ja) %{_mandir}/ja/man1/virt-sysprep.1*
 %lang(ja) %{_mandir}/ja/man1/virt-v2v.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-input-vmware.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-input-xen.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-output-local.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-output-openstack.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-output-rhv.1*
+%lang(ja) %{_mandir}/ja/man1/virt-v2v-support.1*
 %lang(uk) %{_mandir}/uk/man1/virt-builder.1*
 %lang(uk) %{_mandir}/uk/man1/virt-customize.1*
 %lang(uk) %{_mandir}/uk/man1/virt-index-validate.1*
@@ -770,6 +753,12 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_mandir}/uk/man1/virt-sparsify.1*
 %lang(uk) %{_mandir}/uk/man1/virt-sysprep.1*
 %lang(uk) %{_mandir}/uk/man1/virt-v2v.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-input-vmware.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-input-xen.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-output-local.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-output-openstack.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-output-rhv.1*
+%lang(uk) %{_mandir}/uk/man1/virt-v2v-support.1*
 %endif
 %if %{with perltools}
 %attr(755,root,root) %{_bindir}/virt-list-filesystems
@@ -878,7 +867,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -n ocaml-libguestfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/ocaml/stublibs/dllmlguestfs.so
-#%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllv2v_test_harness.so
 %dir %{_libdir}/ocaml/guestfs
 %{_libdir}/ocaml/guestfs/META
 %{_libdir}/ocaml/guestfs/mlguestfs.cma
@@ -888,23 +876,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/guestfs/guestfs.cmi
 %{_libdir}/ocaml/guestfs/guestfs.mli
 %{_libdir}/ocaml/guestfs/libmlguestfs.a
-#%dir %{_libdir}/ocaml/v2v_test_harness
-#%{_libdir}/ocaml/v2v_test_harness/META
-#%{_libdir}/ocaml/v2v_test_harness/libv2v_test_harness.a
-#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmi
-#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.mli
 %if %{with ocaml_opt}
 %{_libdir}/ocaml/guestfs/guestfs.cmx
 %{_libdir}/ocaml/guestfs/mlguestfs.a
 %{_libdir}/ocaml/guestfs/mlguestfs.cmxa
-#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.a
-#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmx
-#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmxa
 %endif
-#%{_mandir}/man1/virt-v2v-test-harness.1*
 %{_mandir}/man3/guestfs-ocaml.3*
-%lang(ja) %{_mandir}/ja/man1/virt-v2v-test-harness.1*
-%lang(uk) %{_mandir}/uk/man1/virt-v2v-test-harness.1*
 %lang(ja) %{_mandir}/ja/man3/guestfs-ocaml.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-ocaml.3*
 %endif
