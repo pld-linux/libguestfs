@@ -1,5 +1,6 @@
---- libguestfs-1.22.3/m4/guestfs_bash_completion.m4.orig	2013-06-14 17:10:32.000000000 +0200
-+++ libguestfs-1.22.3/m4/guestfs_bash_completion.m4	2013-06-19 18:14:18.122926776 +0200
+diff -urNp -x '*.orig' libguestfs-1.40.2.org/m4/guestfs-bash-completion.m4 libguestfs-1.40.2/m4/guestfs-bash-completion.m4
+--- libguestfs-1.40.2.org/m4/guestfs-bash-completion.m4	2019-02-07 15:45:56.974956261 +0100
++++ libguestfs-1.40.2/m4/guestfs-bash-completion.m4	2021-03-30 23:04:13.624972254 +0200
 @@ -16,6 +16,11 @@
  # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  
@@ -12,7 +13,7 @@
  PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0], [
      bash_completion=yes
      AC_MSG_CHECKING([for bash-completions directory])
-@@ -1536,4 +1541,5 @@
+@@ -26,4 +31,5 @@ PKG_CHECK_MODULES([BASH_COMPLETION], [ba
      bash_completion=no
      AC_MSG_WARN([bash-completion not installed])
  ])

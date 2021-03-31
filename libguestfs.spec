@@ -1,6 +1,40 @@
 # TODO:
 # - finish haskell bindings (when finished upstream, not ready as of 1.30.4)
 # - PLD appliance support? (needs at least package list adjustment)
+# 
+# /etc/xdg/virt-builder/repos.d/opensuse.conf
+# /etc/xdg/virt-builder/repos.d/opensuse.gpg
+# %{_bindir}/virt-builder-repository
+# %{bash_compdir}/libguestfs-test-tool
+# %{_mandir}/ja/man1/guestfs-building.1*
+# %{_mandir}/ja/man1/virt-v2v-copy-to-local.1*
+# %{_mandir}/ja/man1/virt-v2v-input-vmware.1*
+# %{_mandir}/ja/man1/virt-v2v-input-xen.1*
+# %{_mandir}/ja/man1/virt-v2v-output-local.1*
+# %{_mandir}/ja/man1/virt-v2v-output-openstack.1*
+# %{_mandir}/ja/man1/virt-v2v-output-rhv.1*
+# %{_mandir}/ja/man1/virt-v2v-support.1*
+# %{_mandir}/ja/man3/guestfs-golang.3*
+# %{_mandir}/ja/man3/guestfs-java.3*
+# %{_mandir}/man1/guestfs-building.1*
+# %{_mandir}/man1/virt-builder-repository.1*
+# %{_mandir}/man1/virt-v2v-input-vmware.1*
+# %{_mandir}/man1/virt-v2v-input-xen.1*
+# %{_mandir}/man1/virt-v2v-output-local.1*
+# %{_mandir}/man1/virt-v2v-output-openstack.1*
+# %{_mandir}/man1/virt-v2v-output-rhv.1*
+# %{_mandir}/man1/virt-v2v-support.1*
+# %{_mandir}/man3/guestfs-gobject.3*
+# %{_mandir}/uk/man1/guestfs-building.1*
+# %{_mandir}/uk/man1/virt-v2v-copy-to-local.1*
+# %{_mandir}/uk/man1/virt-v2v-input-vmware.1*
+# %{_mandir}/uk/man1/virt-v2v-input-xen.1*
+# %{_mandir}/uk/man1/virt-v2v-output-local.1*
+# %{_mandir}/uk/man1/virt-v2v-output-openstack.1*
+# %{_mandir}/uk/man1/virt-v2v-output-rhv.1*
+# %{_mandir}/uk/man1/virt-v2v-support.1*
+# %{_mandir}/uk/man3/guestfs-golang.3*
+# %{_mandir}/uk/man3/guestfs-java.3*
 #
 # Conditional build:
 %bcond_with	static_libs	# build static libraries
@@ -33,17 +67,18 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.36.5
-Release:	8
+Version:	1.40.2
+Release:	0.1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.36-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	9f989443e7cbdbe23498f578ed4a8b06
+Source0:	http://libguestfs.org/download/1.40-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	7cf90b71013c83f28fead844d3b343ea
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-completionsdir.patch
 Patch4:		golang14nosrcpkg.patch
+Patch5:		ocaml-4.12.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -59,13 +94,13 @@ BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
 %{?with_gtk:BuildRequires:	gtk+2-devel >= 2.0}
-BuildRequires:	gtk-doc >= 1.14
 BuildRequires:	hivex-devel >= 1.2.7
 BuildRequires:	libcap-devel
 BuildRequires:	libconfig-devel
 BuildRequires:	libfuse-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libselinux-devel
+BuildRequires:	libtirpc-devel
 BuildRequires:	libtool
 BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
@@ -110,6 +145,7 @@ BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
+BuildRequires:	ocaml-hivex-devel
 BuildRequires:	ocaml-libvirt-devel >= 0.6.1.4-4
 BuildRequires:	ocaml-pcre-devel
 # for virt-builder
@@ -160,6 +196,7 @@ Requires:	yajl >= 2.0.4
 Suggests:	db-utils
 Suggests:	icoutils
 Suggests:	netpbm-progs
+Obsoletes:	libguestfs-apidocs < 1.40.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{ix86}
@@ -207,18 +244,6 @@ Static libguestfs library.
 
 %description static -l pl.UTF-8
 Statyczna biblioteka libguestfs.
-
-%package apidocs
-Summary:	libguestfs API documentation
-Summary(pl.UTF-8):	Dokumentacja API libguestfs
-Group:		Documentation
-BuildArch:	noarch
-
-%description apidocs
-libguestfs API documentation.
-
-%description apidocs -l pl.UTF-8
-Dokumentacja API libguestfs.
 
 %package gobject
 Summary:	GObject bindings to libguestfs library
@@ -443,6 +468,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %{__sed} -E -i -e '1s,#!\s*/usr/bin/env\s+perl(\s|$),#!%{__perl}\1,' \
       tools/virt-list-filesystems \
@@ -452,9 +478,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 
 %build
 # preserve dir across libtoolize
-%{__mv} build-aux/snippet{,.back}
 %{__libtoolize}
-%{__mv} build-aux/snippet{.back,}
 %{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
@@ -474,7 +498,6 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	QEMU=%{?qemu_bin}%{!?qemu_bin:/usr/bin/qemu} \
 	ZIP=/usr/bin/zip \
 	--with-completionsdir=%{_datadir}/bash-completion/completions \
-	--with-html-dir=%{_gtkdocdir} \
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-python-installdir=%{py_sitedir} \
 	--enable-install-daemon \
@@ -583,10 +606,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libguestfs.a
 %endif
-
-%files apidocs
-%defattr(644,root,root,755)
-%{_gtkdocdir}/guestfs
 
 %files gobject
 %defattr(644,root,root,755)
@@ -859,7 +878,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n ocaml-libguestfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/ocaml/stublibs/dllmlguestfs.so
-%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllv2v_test_harness.so
+#%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllv2v_test_harness.so
 %dir %{_libdir}/ocaml/guestfs
 %{_libdir}/ocaml/guestfs/META
 %{_libdir}/ocaml/guestfs/mlguestfs.cma
@@ -869,20 +888,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/guestfs/guestfs.cmi
 %{_libdir}/ocaml/guestfs/guestfs.mli
 %{_libdir}/ocaml/guestfs/libmlguestfs.a
-%dir %{_libdir}/ocaml/v2v_test_harness
-%{_libdir}/ocaml/v2v_test_harness/META
-%{_libdir}/ocaml/v2v_test_harness/libv2v_test_harness.a
-%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmi
-%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.mli
+#%dir %{_libdir}/ocaml/v2v_test_harness
+#%{_libdir}/ocaml/v2v_test_harness/META
+#%{_libdir}/ocaml/v2v_test_harness/libv2v_test_harness.a
+#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmi
+#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.mli
 %if %{with ocaml_opt}
 %{_libdir}/ocaml/guestfs/guestfs.cmx
 %{_libdir}/ocaml/guestfs/mlguestfs.a
 %{_libdir}/ocaml/guestfs/mlguestfs.cmxa
-%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.a
-%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmx
-%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmxa
+#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.a
+#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmx
+#%{_libdir}/ocaml/v2v_test_harness/v2v_test_harness.cmxa
 %endif
-%{_mandir}/man1/virt-v2v-test-harness.1*
+#%{_mandir}/man1/virt-v2v-test-harness.1*
 %{_mandir}/man3/guestfs-ocaml.3*
 %lang(ja) %{_mandir}/ja/man1/virt-v2v-test-harness.1*
 %lang(uk) %{_mandir}/uk/man1/virt-v2v-test-harness.1*

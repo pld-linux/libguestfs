@@ -1,18 +1,19 @@
---- libguestfs-1.20.1/daemon/Makefile.am.orig	2013-01-06 17:34:27.347761080 +0100
-+++ libguestfs-1.20.1/daemon/Makefile.am	2013-01-06 17:35:26.284426518 +0100
-@@ -189,6 +189,7 @@
- 	$(YAJL_LIBS) \
- 	$(SELINUX_LIB) \
+diff -urNp -x '*.orig' libguestfs-1.40.2.org/daemon/Makefile.am libguestfs-1.40.2/daemon/Makefile.am
+--- libguestfs-1.40.2.org/daemon/Makefile.am	2019-02-07 15:45:56.644955783 +0100
++++ libguestfs-1.40.2/daemon/Makefile.am	2021-03-30 23:01:01.769494093 +0200
+@@ -222,6 +222,7 @@ guestfsd_LDADD = \
+ 	$(JANSSON_LIBS) \
+ 	$(SELINUX_LIBS) \
  	$(AUGEAS_LIBS) \
 +	$(LIBXML2_LIBS) \
  	$(HIVEX_LIBS) \
+ 	$(SD_JOURNAL_LIBS) \
  	$(top_builddir)/gnulib/lib/.libs/libgnu.a \
- 	$(GETADDRINFO_LIB) \
-@@ -203,6 +204,7 @@
- guestfsd_CFLAGS = \
+@@ -255,6 +256,7 @@ guestfsd_CFLAGS = \
  	$(WARN_CFLAGS) $(WERROR_CFLAGS) \
+ 	$(RPC_CFLAGS) \
  	$(AUGEAS_CFLAGS) \
 +	$(LIBXML2_CFLAGS) \
  	$(HIVEX_CFLAGS) \
- 	$(YAJL_CFLAGS)
- 
+ 	$(SD_JOURNAL_CFLAGS) \
+ 	$(JANSSON_CFLAGS) \
