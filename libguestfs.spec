@@ -16,6 +16,7 @@
 %bcond_with	php		# PHP binding
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
+%bcond_with	rust		# Rust binding
 %bcond_without	systemtap	# systemtap/dtrace probes
 
 %if 0%{!?php_name:1}
@@ -95,9 +96,8 @@ BuildRequires:	jdk
 BuildRequires:	rpm-javaprov
 %endif
 %if %{with lua}
-# use 5.2 as 5.1 packaging in PLD was incompatible with what's expected by configure
-BuildRequires:	lua52
-BuildRequires:	lua52-devel
+BuildRequires:	lua
+BuildRequires:	lua-devel
 %endif
 %if %{with ocaml}
 BuildRequires:	ocaml >= 1:4.0
@@ -421,10 +421,12 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %{__autoheader}
 %{__automake}
 %configure \
+%ifarch x32
+▸       RUST_TARGET=x86_64-unknown-linux-gnux32 \
+%endif
 	vmchannel_test=no \
 	DB_DUMP=/usr/bin/db_dump \
 	DB_LOAD=/usr/bin/db_load \
-	%{?with_lua:LUA=/usr/bin/lua5.2} \
 	PBMTEXT=/usr/bin/pbmtext \
 	PNMTOPNG=/usr/bin/pnmtopng \
 	BMPTOPNM=/usr/bin/bmptopnm \
@@ -450,6 +452,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	%{!?with_systemtap:--disable-probes} \
 	%{!?with_python:--disable-python} \
 	%{!?with_ruby:--disable-ruby} \
+	%{!?with_rust:--disable-rust} \
 	--disable-silent-rules \
 	%{__enable_disable static_libs static}
 
