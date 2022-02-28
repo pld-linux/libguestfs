@@ -413,7 +413,9 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%ifarch x32
 %patch3 -p1
+%endif
 
 %build
 # preserve dir across libtoolize
