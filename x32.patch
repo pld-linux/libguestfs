@@ -1,0 +1,11 @@
+--- libguestfs-1.46.0/rust/Makefile.am~	2020-03-06 20:31:08.000000000 +0100
++++ libguestfs-1.46.0/rust/Makefile.am	2022-02-28 09:04:00.888944491 +0100
+@@ -33,7 +33,7 @@
+ if HAVE_RUST
+ 
+ all: $(srcdir)/src/lib.rs
+-	$(top_builddir)/run $(CARGO) build --release
++	PKG_CONFIG_ALLOW_CROSS=1 $(top_builddir)/run $(CARGO) build --release --target x86_64-unknown-linux-gnux32
+ 
+ TESTS = run-bindtests run-tests
+ 

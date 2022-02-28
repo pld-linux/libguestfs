@@ -40,7 +40,8 @@ Source0:	http://libguestfs.org/download/1.46-stable/%{name}-%{version}.tar.gz
 # Source0-md5:	3d6f99ed705206d11904c67e69ba64da
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
-Patch3:		%{name}-completionsdir.patch
+Patch2:		%{name}-completionsdir.patch
+Patch3:		x32.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -411,6 +412,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 %patch3 -p1
 
 %build
@@ -421,9 +423,6 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %{__autoheader}
 %{__automake}
 %configure \
-%ifarch x32
-▸       RUST_TARGET=x86_64-unknown-linux-gnux32 \
-%endif
 	vmchannel_test=no \
 	DB_DUMP=/usr/bin/db_dump \
 	DB_LOAD=/usr/bin/db_load \
