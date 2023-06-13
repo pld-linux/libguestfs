@@ -41,13 +41,13 @@ Version:	1.46.0
 Release:	5
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://libguestfs.org/download/1.46-stable/%{name}-%{version}.tar.gz
+Source0:	https://libguestfs.org/download/1.46-stable/%{name}-%{version}.tar.gz
 # Source0-md5:	3d6f99ed705206d11904c67e69ba64da
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-completionsdir.patch
 Patch3:		x32.patch
-URL:		http://libguestfs.org/
+URL:		https://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	augeas-devel >= 1.2.0
 BuildRequires:	autoconf >= 2.50
