@@ -80,6 +80,7 @@ BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-hivex-devel
 BuildRequires:	pcre2-8-devel
 BuildRequires:	perl-base
+BuildRequires:	perl-libintl
 BuildRequires:	perl-modules
 BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
