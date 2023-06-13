@@ -17,7 +17,6 @@
 %bcond_without	python		# Python binding
 %bcond_without	ruby		# Ruby binding
 %bcond_with	rust		# Rust binding
-%bcond_without	systemtap	# systemtap/dtrace probes
 %bcond_without	vala		# vala binding
 
 %if 0%{!?php_name:1}
@@ -38,12 +37,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.46.0
-Release:	5
+Version:	1.50.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://libguestfs.org/download/1.46-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	3d6f99ed705206d11904c67e69ba64da
+Source0:	https://libguestfs.org/download/1.50-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	eea08678d34a856dea49ef688634a341
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-completionsdir.patch
@@ -75,7 +74,8 @@ BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
 BuildRequires:	ncurses-devel
-BuildRequires:	ocaml >= 1:4.01
+BuildRequires:	ocaml >= 1:4.04
+BuildRequires:	ocaml-augeas-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-hivex-devel
 BuildRequires:	pcre2-8-devel
@@ -96,7 +96,8 @@ BuildRequires:	sleuthkit-devel
 BuildRequires:	systemd-devel >= 1:196
 %{?with_vala:BuildRequires:	vala}
 BuildRequires:	xz
-BuildRequires:	yara-devel
+BuildRequires:	yara-devel >= 4.0.0
+BuildRequires:	zstd
 %if %{with appliance}
 BuildRequires:	supermin >= 5.1.0
 %endif
@@ -153,9 +154,6 @@ BuildRequires:	ruby-rubygems
 %if %{with rust}
 BuildRequires:	cargo
 BuildRequires:	rust
-%endif
-%if %{with systemtap}
-BuildRequires:	systemtap-sdt-devel
 %endif
 Requires:	jansson >= 2.7
 Requires:	qemu-common >= 1.1.0
@@ -489,7 +487,6 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	%{!?with_ocaml:--disable-ocaml} \
 	%{!?with_perl:--disable-perl} \
 	%{!?with_php:--disable-php} \
-	%{!?with_systemtap:--disable-probes} \
 	%{!?with_python:--disable-python} \
 	%{!?with_ruby:--disable-ruby} \
 	%{!?with_rust:--disable-rust} \
