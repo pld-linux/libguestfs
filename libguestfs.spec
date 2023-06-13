@@ -504,8 +504,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with ocaml}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dll*.so.owner
 %else
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/virt-{builder,index-validate,resize,sparsify,sysprep,v2v-test-harness}.1 \
-	$RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ocaml.3
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ocaml.3
 %endif
 %if %{without ruby}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ruby.3
