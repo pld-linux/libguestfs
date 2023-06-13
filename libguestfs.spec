@@ -18,6 +18,7 @@
 %bcond_without	ruby		# Ruby binding
 %bcond_with	rust		# Rust binding
 %bcond_without	systemtap	# systemtap/dtrace probes
+%bcond_without	vala		# vala binding
 
 %if 0%{!?php_name:1}
 %define		php_name	php55
@@ -86,11 +87,13 @@ BuildRequires:	po4a
 BuildRequires:	qemu-img >= 1.0
 BuildRequires:	readline-devel
 BuildRequires:	rpcsvc-proto
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-devel >= 4.6.0
 BuildRequires:	rpmbuild(macros) >= 2.021
 BuildRequires:	sleuthkit-devel
 # libsystemd-journal
 BuildRequires:	systemd-devel >= 1:196
+%{?with_vala:BuildRequires:	vala}
 BuildRequires:	xz
 BuildRequires:	yara-devel
 %if %{with appliance}
@@ -417,6 +420,19 @@ Ruby bindings for libguestfs.
 %description -n ruby-libguestfs -l pl.UTF-8
 Wiązania języka Ruby do libguestfs.
 
+%package -n vala-libguestfs
+Summary:	Vala bindings for libguestfs
+Summary(pl.UTF-8):	Wiązania języka Vala do libguestfs
+Group:		Development/Languages
+Requires:	%{name}-devel = %{version}-%{release}
+BuildArch:	noarch
+
+%description -n vala-libguestfs
+Vala bindings for libguestfs.
+
+%description -n vala-libguestfs -l pl.UTF-8
+Wiązania języka Vala do libguestfs.
+
 %package -n bash-completion-libguestfs
 Summary:	bash-completion for libguestfs tools
 Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
@@ -475,6 +491,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	%{!?with_python:--disable-python} \
 	%{!?with_ruby:--disable-ruby} \
 	%{!?with_rust:--disable-rust} \
+	%{!?with_vala:--disable-vala} \
 	--disable-silent-rules \
 	%{__enable_disable static_libs static}
 
@@ -765,6 +782,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/guestfs-ruby.3*
 %lang(ja) %{_mandir}/ja/man3/guestfs-ruby.3*
 %lang(uk) %{_mandir}/uk/man3/guestfs-ruby.3*
+%endif
+
+%if %{with vala}
+%files -n vala-libguestfs
+%defattr(644,root,root,755)
+%{_datadir}/vala/vapi/libguestfs-gobject-1.0.deps
+%{_datadir}/vala/vapi/libguestfs-gobject-1.0.vapi
 %endif
 
 %files -n bash-completion-libguestfs
