@@ -32,6 +32,8 @@
 %undefine	with_golang
 %endif
 
+%{?with_java:%{?use_default_jdk}}
+
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
@@ -85,7 +87,7 @@ BuildRequires:	qemu-img >= 1.0
 BuildRequires:	readline-devel
 BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-devel >= 4.6.0
-BuildRequires:	rpmbuild(macros) >= 2.009
+BuildRequires:	rpmbuild(macros) >= 2.021
 BuildRequires:	sleuthkit-devel
 # libsystemd-journal
 BuildRequires:	systemd-devel >= 1:196
@@ -105,7 +107,7 @@ BuildRequires:	golang
 BuildRequires:	ghc
 %endif
 %if %{with java}
-BuildRequires:	jdk
+%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:  jdk}
 BuildRequires:	rpm-javaprov
 %endif
 %if %{with lua}
