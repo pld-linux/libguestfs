@@ -25,8 +25,11 @@
 
 %ifarch x32
 %undefine	with_erlang
-%undefine	with_golang
 %undefine	with_ocaml_opt
+%endif
+
+%ifnarch %{go_arches}
+%undefine	with_golang
 %endif
 
 Summary:	Library and tools for accessing and modifying virtual machine disk images
@@ -44,41 +47,50 @@ Patch2:		%{name}-completionsdir.patch
 Patch3:		x32.patch
 URL:		http://libguestfs.org/
 BuildRequires:	acl-devel
-BuildRequires:	attr-devel
-BuildRequires:	augeas-devel >= 1.0.0
+BuildRequires:	augeas-devel >= 1.2.0
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	cdrkit-mkisofs
-BuildRequires:	db-utils
+BuildRequires:	cpio
 BuildRequires:	flex
 BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gperf
 BuildRequires:	hivex-devel >= 1.2.7
+BuildRequires:	jansson-devel >= 2.7
 BuildRequires:	libcap-devel
 BuildRequires:	libconfig-devel
 BuildRequires:	libfuse-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libselinux-devel
+BuildRequires:	libstdc++-devel
 BuildRequires:	libtirpc-devel
 BuildRequires:	libtool
 BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
 BuildRequires:	ncurses-devel
-BuildRequires:	pcre-devel
+BuildRequires:	ocaml >= 1:4.01
+BuildRequires:	ocaml-findlib
+BuildRequires:	ocaml-hivex-devel
+BuildRequires:	pcre2-8-devel
 BuildRequires:	perl-base
+BuildRequires:	perl-modules
 BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
 BuildRequires:	po4a
 BuildRequires:	qemu-img >= 1.0
 BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.656
+BuildRequires:	rpcsvc-proto
+BuildRequires:	rpm-devel >= 4.6.0
+BuildRequires:	rpmbuild(macros) >= 2.009
+BuildRequires:	sleuthkit-devel
 # libsystemd-journal
 BuildRequires:	systemd-devel >= 1:196
-BuildRequires:	yajl-devel >= 2.0.4
+BuildRequires:	xz
+BuildRequires:	yara-devel
 %if %{with appliance}
 BuildRequires:	supermin >= 5.1.0
 %endif
@@ -101,16 +113,11 @@ BuildRequires:	lua
 BuildRequires:	lua-devel
 %endif
 %if %{with ocaml}
-BuildRequires:	ocaml >= 1:4.0
 BuildRequires:	ocaml-camlp4
 BuildRequires:	ocaml-fileutils-devel
-BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-gettext-devel
-BuildRequires:	ocaml-hivex-devel
 BuildRequires:	ocaml-libvirt-devel >= 0.6.1.4-4
 BuildRequires:	ocaml-pcre-devel
-# for virt-builder
-BuildRequires:	xz-devel
 %endif
 %if %{with perl}
 BuildRequires:	perl-ExtUtils-MakeMaker
@@ -125,6 +132,7 @@ BuildRequires:	%{php_name}-program
 %if %{with python}
 BuildRequires:	python3
 BuildRequires:	python3-devel
+BuildRequires:	python3-modules
 BuildRequires:	rpm-pythonprov
 %endif
 %if %{with ruby}
@@ -136,9 +144,14 @@ BuildRequires:	ruby-rake
 BuildRequires:	ruby-rdoc
 BuildRequires:	ruby-rubygems
 %endif
+%if %{with rust}
+BuildRequires:	cargo
+BuildRequires:	rust
+%endif
 %if %{with systemtap}
 BuildRequires:	systemtap-sdt-devel
 %endif
+Requires:	jansson >= 2.7
 Requires:	qemu-common >= 1.1.0
 Requires:	yajl >= 2.0.4
 Suggests:	db-utils
@@ -237,7 +250,7 @@ Summary:	libguestfs tools for accessing and modifying virtual machine disk image
 Summary(pl.UTF-8):	Narzędzia libguestfs do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	augeas-libs >= 1.0.0
+Requires:	augeas-libs >= 1.2.0
 %{?with_ocaml:Requires:	ocaml-libguestfs = %{version}-%{release}}
 %if %{with ocaml}
 Requires:	ocaml-libvirt >= 0.6.1.4-4
@@ -400,7 +413,7 @@ Wiązania języka Ruby do libguestfs.
 Summary:	bash-completion for libguestfs tools
 Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
 Group:		Applications/Shells
-Requires:	bash-completion >= 2.0
+Requires:	bash-completion >= 1:2.0
 
 %description -n bash-completion-libguestfs
 bash-completion for guestfish tool.
