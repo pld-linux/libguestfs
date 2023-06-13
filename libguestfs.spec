@@ -166,6 +166,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %ifarch %{x8664} x32
 %define		qemu_bin	/usr/bin/qemu-system-x86_64
 %endif
+%ifarch aarch64
+%define		qemu_bin	/usr/bin/qemu-system-aarch64
+%endif
+%ifarch %{arm}
+%define		qemu_bin	/usr/bin/qemu-system-arm
+%endif
 
 %description
 libguestfs is a library and set of tools for accessing and modifying
