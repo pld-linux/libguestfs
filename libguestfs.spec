@@ -438,6 +438,7 @@ Summary:	bash-completion for libguestfs tools
 Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
 Group:		Applications/Shells
 Requires:	bash-completion >= 1:2.0
+BuildArch:	noarch
 
 %description -n bash-completion-libguestfs
 bash-completion for guestfish tool.
