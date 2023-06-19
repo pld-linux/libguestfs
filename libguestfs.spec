@@ -69,7 +69,7 @@ BuildRequires:	libmagic-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtirpc-devel
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:2
 BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
@@ -85,7 +85,7 @@ BuildRequires:	perl-modules
 BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
 BuildRequires:	po4a
-BuildRequires:	qemu-img >= 1.0
+BuildRequires:	qemu-img >= 1.3.0
 BuildRequires:	readline-devel
 BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-build >= 4.6
@@ -96,10 +96,11 @@ BuildRequires:	sleuthkit-devel
 BuildRequires:	systemd-devel >= 1:196
 %{?with_vala:BuildRequires:	vala}
 BuildRequires:	xz
+BuildRequires:	xz-devel
 BuildRequires:	yara-devel >= 4.0.0
 BuildRequires:	zstd
 %if %{with appliance}
-BuildRequires:	supermin >= 5.1.0
+BuildRequires:	supermin >= 5.1.18
 %endif
 %if %{with erlang}
 # erl_interface package
@@ -137,9 +138,9 @@ BuildRequires:	%{php_name}-devel
 BuildRequires:	%{php_name}-program
 %endif
 %if %{with python}
-BuildRequires:	python3
-BuildRequires:	python3-devel
-BuildRequires:	python3-modules
+BuildRequires:	python3 >= 1:3.2
+BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	python3-modules >= 1:3.2
 BuildRequires:	rpm-pythonprov
 %endif
 %if %{with ruby}
@@ -156,7 +157,7 @@ BuildRequires:	cargo
 BuildRequires:	rust
 %endif
 Requires:	jansson >= 2.7
-Requires:	qemu-common >= 1.1.0
+Requires:	qemu-common >= 1.3.0
 Requires:	yajl >= 2.0.4
 Suggests:	db-utils
 Suggests:	icoutils
@@ -436,11 +437,12 @@ Wiązania języka Vala do libguestfs.
 Summary:	bash-completion for libguestfs tools
 Summary(pl.UTF-8):	Bashowe uzupełnianie argumentów dla narzędzi libguestfs
 Group:		Applications/Shells
+Requires:	%{name}-tools = %{version}-%{release}
 Requires:	bash-completion >= 1:2.0
 BuildArch:	noarch
 
 %description -n bash-completion-libguestfs
-bash-completion for guestfish tool.
+bash-completion for libguestfs tools.
 
 %description -n bash-completion-libguestfs -l pl.UTF-8
 Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
@@ -475,7 +477,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 	QEMU=%{?qemu_bin}%{!?qemu_bin:/usr/bin/qemu} \
 	ZIP=/usr/bin/zip \
 	PYTHON=%{__python3} \
-	--with-completionsdir=%{_datadir}/bash-completion/completions \
+	--with-completionsdir=%{bash_compdir} \
 	--with-java=%{?with_java:%{java_home}}%{!?with_java:no} \
 	--with-python-installdir=%{py3_sitedir} \
 	--enable-install-daemon \
@@ -517,6 +519,12 @@ rm -rf $RPM_BUILD_ROOT
 %if %{without appliance}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man1/libguestfs-make-fixed-appliance.1
 %endif
+%if %{without golang}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-golang.3
+%endif
+%if %{without java}
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-java.3
+%endif
 %if %{with ocaml}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dll*.so.owner
 %else
@@ -525,6 +533,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{without ruby}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/{ja,uk}/man3/guestfs-ruby.3
 %endif
+# useless in binary package
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/{man1,ja/man1,uk/man1}/guestfs-building.1
 
 install -d $RPM_BUILD_ROOT%{_libdir}/guestfs
 
@@ -795,4 +805,5 @@ rm -rf $RPM_BUILD_ROOT
 %{bash_compdir}/guestfish
 %{bash_compdir}/guestmount
 %{bash_compdir}/guestunmount
+%{bash_compdir}/libguestfs-test-tool
 %{bash_compdir}/virt-*
