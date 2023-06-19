@@ -400,6 +400,7 @@ Summary:	Python bindings for libguestfs
 Summary(pl.UTF-8):	Wiązania Pythona do libguestfs
 Group:		Development/Languages/Python
 Requires:	%{name} = %{version}-%{release}
+Obsoletes:	python-libguestfs < 1.46
 
 %description -n python3-libguestfs
 Python bindings for libguestfs.
