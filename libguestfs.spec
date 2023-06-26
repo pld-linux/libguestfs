@@ -677,11 +677,13 @@ rm -rf $RPM_BUILD_ROOT
 /lib/udev/rules.d/99-guestfs-serial.rules
 %dir %{_libdir}/guestfs
 %dir %{_libdir}/guestfs/supermin.d
-%{_libdir}/guestfs/supermin.d/daemon.img
-%{_libdir}/guestfs/supermin.d/init.img
-%{_libdir}/guestfs/supermin.d/udev-rules.img
-%{_libdir}/guestfs/supermin.d/base.img
+%{_libdir}/guestfs/supermin.d/base.tar.gz
+%{_libdir}/guestfs/supermin.d/daemon.tar.gz
+%{_libdir}/guestfs/supermin.d/excludefiles
 %{_libdir}/guestfs/supermin.d/hostfiles
+%{_libdir}/guestfs/supermin.d/init.tar.gz
+%{_libdir}/guestfs/supermin.d/packages
+%{_libdir}/guestfs/supermin.d/udev-rules.tar.gz
 %endif
 
 %if %{with erlang}
