@@ -47,6 +47,7 @@ Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-completionsdir.patch
 Patch3:		x32.patch
+Patch4:		appliance-pld.patch
 URL:		https://libguestfs.org/
 BuildRequires:	acl-devel
 BuildRequires:	augeas-devel >= 1.2.0
@@ -100,7 +101,7 @@ BuildRequires:	xz-devel
 BuildRequires:	yara-devel >= 4.0.0
 BuildRequires:	zstd
 %if %{with appliance}
-BuildRequires:	supermin >= 5.1.18
+BuildRequires:	supermin >= 5.2.2-2
 %endif
 %if %{with erlang}
 # erl_interface package
@@ -456,6 +457,7 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %ifarch x32
 %patch3 -p1
 %endif
+%patch4 -p1
 
 %build
 # preserve dir across libtoolize

@@ -1,0 +1,52 @@
+--- libguestfs-1.50.1.orig/m4/guestfs-appliance.m4	2023-02-20 13:08:27.926251990 +0100
++++ libguestfs-1.50.1/m4/guestfs-appliance.m4	2023-06-24 11:33:37.996124936 +0200
+@@ -129,7 +129,7 @@
+     AC_SUBST([DISTRO])
+ fi
+ AM_CONDITIONAL([HAVE_RPM],
+-    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA ], [true],
++    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA | PLD ], [true],
+                         [*], [false])])
+ AM_CONDITIONAL([HAVE_DPKG],
+     [AS_CASE([$DISTRO], [DEBIAN | UBUNTU ], [true],
+--- libguestfs-1.50.1.orig/appliance/packagelist.in	2023-02-21 21:39:30.320831356 +0100
++++ libguestfs-1.50.1/appliance/packagelist.in	2023-06-25 20:41:33.719990490 +0200
+@@ -214,6 +214,27 @@
+   zstd
+ )
+ 
++ifelse(PLD,1,
++  cryptsetup
++  dhcp-client
++  grub2
++  iproute2
++  iputils
++  kernel
++  libldm
++  nilfs-utils
++  ntfsprogs
++  ntfs-3g
++  openssh-clients
++  policycoreutils
++  reiserfsprogs
++  rpm-lib
++  systemd              dnl for /sbin/reboot and udevd
++  vim-light
++  xz
++  zstd
++)
++
+ include(guestfsd.deps)
+ 
+ acl
+@@ -290,6 +311,10 @@
+   qemu-img
+   which
+ )
++ifelse(PLD,1,
++  qemu-img
++  which
++)
+ curl
+ kpartx
+ dnl (virt-dib) tools optionally used for elements
