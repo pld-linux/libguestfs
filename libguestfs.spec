@@ -114,7 +114,7 @@ BuildRequires:	golang
 BuildRequires:	ghc
 %endif
 %if %{with java}
-%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:  jdk}
+%buildrequires_jdk
 BuildRequires:	rpm-javaprov
 %endif
 %if %{with lua}
