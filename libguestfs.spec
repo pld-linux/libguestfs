@@ -37,12 +37,12 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.50.1
-Release:	2
+Version:	1.52.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://libguestfs.org/download/1.50-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	eea08678d34a856dea49ef688634a341
+Source0:	https://download.libguestfs.org/1.52-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	5465be85dd004775f4f2f4adee1af5b2
 Patch0:		ncurses.patch
 Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-completionsdir.patch
@@ -75,7 +75,7 @@ BuildRequires:	libvirt-devel >= 0.10.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxml2-progs
 BuildRequires:	ncurses-devel
-BuildRequires:	ocaml >= 1:4.04
+BuildRequires:	ocaml >= 1:4.07
 BuildRequires:	ocaml-augeas-devel
 BuildRequires:	ocaml-findlib
 BuildRequires:	ocaml-hivex-devel
@@ -99,7 +99,7 @@ BuildRequires:	systemd-devel >= 1:196
 BuildRequires:	xz
 BuildRequires:	xz-devel
 BuildRequires:	yara-devel >= 4.0.0
-BuildRequires:	zstd
+BuildRequires:	zstd-devel
 %if %{with appliance}
 BuildRequires:	supermin >= 5.2.2-2
 %endif

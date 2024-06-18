@@ -1,17 +1,17 @@
---- libguestfs-1.50.1.orig/m4/guestfs-appliance.m4	2023-02-20 13:08:27.926251990 +0100
-+++ libguestfs-1.50.1/m4/guestfs-appliance.m4	2023-06-24 11:33:37.996124936 +0200
-@@ -129,7 +129,7 @@
+--- libguestfs-1.52.1/m4/guestfs-appliance.m4.orig	2024-06-18 06:02:35.802278052 +0200
++++ libguestfs-1.52.1/m4/guestfs-appliance.m4	2024-06-18 19:53:54.552061673 +0200
+@@ -130,7 +130,7 @@ if test "x$ENABLE_APPLIANCE" = "xyes"; t
      AC_SUBST([DISTRO])
  fi
  AM_CONDITIONAL([HAVE_RPM],
--    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA ], [true],
-+    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA | PLD ], [true],
+-    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA | OPENCLOUDOS ], [true],
++    [AS_CASE([$DISTRO], [REDHAT | SUSE | OPENMANDRIVA | MAGEIA | OPENCLOUDOS | PLD ], [true],
                          [*], [false])])
  AM_CONDITIONAL([HAVE_DPKG],
      [AS_CASE([$DISTRO], [DEBIAN | UBUNTU ], [true],
---- libguestfs-1.50.1.orig/appliance/packagelist.in	2023-02-21 21:39:30.320831356 +0100
-+++ libguestfs-1.50.1/appliance/packagelist.in	2023-06-25 20:41:33.719990490 +0200
-@@ -214,6 +214,27 @@
+--- libguestfs-1.52.1/appliance/packagelist.in.orig	2024-05-13 15:12:19.002830902 +0200
++++ libguestfs-1.52.1/appliance/packagelist.in	2024-06-18 06:02:35.802278052 +0200
+@@ -238,6 +238,27 @@ ifelse(OPENCLOUDOS,1,
    zstd
  )
  
@@ -39,14 +39,3 @@
  include(guestfsd.deps)
  
  acl
-@@ -290,6 +311,10 @@
-   qemu-img
-   which
- )
-+ifelse(PLD,1,
-+  qemu-img
-+  which
-+)
- curl
- kpartx
- dnl (virt-dib) tools optionally used for elements
