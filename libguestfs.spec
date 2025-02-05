@@ -38,7 +38,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.52.2
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.libguestfs.org/1.52-stable/%{name}-%{version}.tar.gz
@@ -451,13 +451,13 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
+%patch -P 2 -p1
 %ifarch x32
-%patch3 -p1
+%patch -P 3 -p1
 %endif
-%patch4 -p1
+%patch -P 4 -p1
 
 %build
 # preserve dir across libtoolize
