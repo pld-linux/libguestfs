@@ -179,6 +179,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		qemu_bin	/usr/bin/qemu-system-arm
 %endif
 
+%define		gettext_ver	%(rpm -q --qf='%%{V}' gettext-tools 2> /dev/null || echo ERROR)
+
 %description
 libguestfs is a library and set of tools for accessing and modifying
 virtual machine (VM) disk images. You can use this for viewing and
@@ -458,6 +460,11 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch -P 3 -p1
 %endif
 %patch -P 4 -p1
+
+grep -qr '^AM_GNU_GETTEXT' m4 && ( test ! -e acinclude.m4 || ! grep -q AM_GNU_GETTEXT acinclude.m4 ) || exit 1
+%if %{_ver_ge %{gettext_ver} 0.24.1}
+	cat /usr/share/gettext/m4/*.m4 >> acinclude.m4
+%endif
 
 %build
 # preserve dir across libtoolize
