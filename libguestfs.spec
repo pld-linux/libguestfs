@@ -461,13 +461,8 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %endif
 %patch -P 4 -p1
 
-grep -qr '^AM_GNU_GETTEXT' m4 && ( test ! -e acinclude.m4 || ! grep -q AM_GNU_GETTEXT acinclude.m4 ) || exit 1
-%if %{_ver_ge %{gettext_ver} 0.24.1}
-	cat /usr/share/gettext/m4/*.m4 >> acinclude.m4
-%endif
-
 %build
-# preserve dir across libtoolize
+%{__gettextize}
 %{__libtoolize}
 %{__aclocal} -I m4
 %{__autoconf}
