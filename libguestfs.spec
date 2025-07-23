@@ -38,7 +38,7 @@ Summary:	Library and tools for accessing and modifying virtual machine disk imag
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
 Version:	1.52.2
-Release:	8
+Release:	9
 License:	LGPL v2+
 Group:		Libraries
 Source0:	https://download.libguestfs.org/1.52-stable/%{name}-%{version}.tar.gz
