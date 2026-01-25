@@ -179,8 +179,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		qemu_bin	/usr/bin/qemu-system-arm
 %endif
 
-%define		gettext_ver	%(rpm -q --qf='%%{V}' gettext-tools 2> /dev/null || echo ERROR)
-
 %description
 libguestfs is a library and set of tools for accessing and modifying
 virtual machine (VM) disk images. You can use this for viewing and
