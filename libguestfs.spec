@@ -37,14 +37,13 @@
 Summary:	Library and tools for accessing and modifying virtual machine disk images
 Summary(pl.UTF-8):	Biblioteka i narzędzia do dostępu i modyfikacji obrazów dysków maszyn wirtualnych
 Name:		libguestfs
-Version:	1.52.2
-Release:	10
+Version:	1.58.1
+Release:	1
 License:	LGPL v2+
 Group:		Libraries
-Source0:	https://download.libguestfs.org/1.52-stable/%{name}-%{version}.tar.gz
-# Source0-md5:	1cd1ec5216729cb826903e8d18f62198
+Source0:	https://download.libguestfs.org/1.58-stable/%{name}-%{version}.tar.gz
+# Source0-md5:	5c8aef16d543fa58aa1a6726f143753b
 Patch0:		ncurses.patch
-Patch1:		augeas-libxml2.patch
 Patch2:		%{name}-completionsdir.patch
 Patch3:		x32.patch
 Patch4:		appliance-pld.patch
@@ -452,7 +451,6 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %prep
 %setup -q
 %patch -P 0 -p1
-%patch -P 1 -p1
 %patch -P 2 -p1
 %ifarch x32
 %patch -P 3 -p1
@@ -460,12 +458,10 @@ Bashowe uzupełnianie argumentów dla narzędzi libguestfs.
 %patch -P 4 -p1
 
 %build
-%{__gettextize}
-%{__libtoolize}
 %{__aclocal} -I m4
-%{__autoconf}
 %{__autoheader}
 %{__automake}
+%{__autoconf}
 %configure \
 	vmchannel_test=no \
 	DB_DUMP=/usr/bin/db_dump \
